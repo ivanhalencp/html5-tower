@@ -249,11 +249,6 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
         this.realPosition.add(v2Speed);
         // IF REACH TARGET (CELL AND REAL POSITION)
         var cellPosition = getCellCoords(this.realPosition.x, this.realPosition.y);
-        /*var str = "cpx: " + cellPosition.x.toString() + ", cpy: " + cellPosition.y.toString();
-        str += ", ctx: " + cellTarget.x.toString() + ", cty: " + cellTarget.y.toString();
-        str += ", rpx: " + this.realPosition.x.toString() + ", rpy: " + this.realPosition.y.toString();
-        str += ", rtx: " + realTarget.x.toString() + ", rty: " + realTarget.y.toString();
-        divDebug(str);*/
         if (cellPosition.equal(cellTarget) && this.realPosition.equal(realTarget))
         {
             if (this.pathIndexTarget < path.points.length - 1)
@@ -287,6 +282,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
     this.angularSpeed = angularSpeed;
     this.bulletType = bulletType;
     this.reloadTime = reloadTime;
+    this.reloadTimer = 0;
     this.turretAngle = 0;
     this.setCellPosition = function(cellPosition)
     {
@@ -297,38 +293,77 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
     {
         var enemy = null;
         var enemyIndex = 0;
+        // IF FOUND ENEMY IN ATTACK RANGE
         var enemyFound = false;
         var radAngle;
         var degAngle;
+        var angleDiff;
+        var bullet = null;
+        // UPDATE RELOAD TIMER
+        if (this.reloadTimer < this.reloadTime)
+            this.reloadTimer++;
         while (enemyIndex < enemies.length && !enemyFound)
         {
+            // RANGE CHECK
             enemy = enemies[enemyIndex];
             if (distance(this.realPosition, enemy.realPosition) <= this.attackRange)
             {                
                 enemyFound = true;
                 radAngle = yAxisAngle(this.realPosition, enemy.realPosition);
                 degAngle = Math.round(radToDeg(radAngle));
-                //divDebug("ta:" + this.turretAngle.toString() + ", degAngle:" + degAngle.toString());
+                angleDiff = Math.abs(degAngle - this.turretAngle);
                 if (this.turretAngle < degAngle)
-                    this.turretAngle += this.angularSpeed;
+                {
+                    if (angleDiff >= this.angularSpeed)
+                        this.turretAngle += this.angularSpeed;
+                    else
+                        // TO ADJUST ANGULAR MOVEMENT
+                        this.turretAngle += angleDiff;
+                }
                 else if (this.turretAngle > degAngle)
-                    this.turretAngle -= this.angularSpeed;
-                else
-                    divDebug("Fire!!");
+                {
+                    if (angleDiff >= this.angularSpeed)
+                        this.turretAngle -= this.angularSpeed;
+                    else
+                        // TO ADJUST ANGULAR MOVEMENT
+                        this.turretAngle -= angleDiff;
+                }
+                // TARGET IN CROSSHAIRS
+                if (this.turretAngle == degAngle)
+                {
+                    if (this.reloadTimer == this.reloadTime)
+                    {
+                        // TODO : FIRE !!
+                        // CREATE A BULLET AND RETURN IT !!
+                        // RESET RELOAD TIMER
+                        this.reloadTimer = 0;
+                    }
+                }
             }
             else
                 enemyIndex++;
         }
+        return bullet;
     }
 }
 
-function Bullet(id, type, realPosition, damage, speed)
+function Bullet(id, type, speed, damage, damageRange)
 {
     this.id = id;
     this.type = type;
-    this.realPosition = realPosition;
+    this.speed = speed;
     this.damage = damage;
-    this.doAction = function()
+    this.damageRange = damageRange;
+    this.realPosition = null;
+    this.target = null;
+    this.targetPosition = null;
+    this.init = function(realPosition, enemy)
+    {
+        this.realPosition = realPosition;
+        this.targetPosition = enemy.realPosition;
+        this.target = enemy;
+    }
+    this.doAction = function(enemies)
     {
         // MOVE
     }
@@ -347,6 +382,20 @@ function EnemyFactory()
 }
 
 function TowerFactory()
+{
+    var towerOuid = 0;
+    this.buildTower = function (type, cellPosition)
+    {
+        var tower = null;
+        if (type == "chinoky")
+            tower = new Tower(towerOuid++, type, 150, 2, 1, 10);
+        if (tower != null && isset(cellPosition))
+            tower.setCellPosition(cellPosition);
+        return tower;
+    }
+}
+
+function BulletFactory()
 {
     var towerOuid = 0;
     this.buildTower = function (type, cellPosition)
