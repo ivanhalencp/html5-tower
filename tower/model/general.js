@@ -99,6 +99,7 @@ function Horde(actionTime, actionDelay, path)
                 enemy = this.enemiesInAction[enemyInActionIndex];
                 if (enemy.alive)
                 {
+                    enemy.targeted = false;
                     enemyBaseDamage = enemy.doAction(this.path);
                     baseDamage += enemyBaseDamage;
                     if (enemyBaseDamage > 0)
@@ -206,6 +207,10 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
     this.inAction = false;
     this.alive = true;
     this.pathIndexTarget = 1;
+    // TO DRAW SPRITE IN DIRECTION (2 : DOWN , 4 : LEFT, 6 : RIGHT, 8 : UP, 5 : NO INITIALIZED)
+    this.direction = 5;
+    // TO DRAW / OR NOT CROSSHAIRS OVER THE SPRITE
+    this.targeted = false;
     this.setRelativePosition = function(relativePosition)
     {
         this.relativePosition = relativePosition;
@@ -226,24 +231,32 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
             if (realTarget.x - this.realPosition.x < scalarSpeed)
                 scalarSpeed = realTarget.x - this.realPosition.x;
             v2Speed = new Vector2(scalarSpeed, 0);
+            // [ MOVE TO THE RIGHT ]
+            this.direction = 6;
         }
         else if (this.realPosition.x > realTarget.x)
         {
             if (this.realPosition.x - realTarget.x < scalarSpeed)
                 scalarSpeed = this.realPosition.x - realTarget.x;
             v2Speed = new Vector2(scalarSpeed * -1, 0);
+            // [ MOVE TO THE LEFT ]
+            this.direction = 4;
         }
         else if (this.realPosition.y < realTarget.y)
         {
             if (realTarget.y - this.realPosition.y < scalarSpeed)
                 scalarSpeed = realTarget.y - this.realPosition.y;
             v2Speed = new Vector2(0, scalarSpeed);
+            // [ MOVE DOWN ]
+            this.direction = 2;
         }
         else if (this.realPosition.y > realTarget.y)
         {
             if (this.realPosition.y - realTarget.y < scalarSpeed)
                 scalarSpeed = this.realPosition.y - realTarget.y;
             v2Speed = new Vector2(0, scalarSpeed * -1);
+            // [ MOVE UP ]
+            this.direction = 8;
         }
         // ADD V2 SPEED
         this.realPosition.add(v2Speed);
@@ -308,7 +321,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
             enemy = enemies[enemyIndex];
             if (distance(this.realPosition, enemy.realPosition) <= this.attackRange)
             {                
-                enemyFound = true;
+                enemyFound = true;                
                 radAngle = yAxisAngle(this.realPosition, enemy.realPosition);
                 degAngle = Math.round(radToDeg(radAngle));
                 angleDiff = Math.abs(degAngle - this.turretAngle);
@@ -331,6 +344,8 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
                 // TARGET IN CROSSHAIRS
                 if (this.turretAngle == degAngle)
                 {
+                    // MARK ENEMY AS TARGETED
+                    enemy.targeted = true;
                     if (this.reloadTimer == this.reloadTime)
                     {
                         // TODO : FIRE !!
@@ -437,6 +452,7 @@ function Game(canvasManager)
         this.roadImage = this.canvasManager.loadImage("img/road_1.png");
         this.grassBaseTower = this.canvasManager.loadImage("img/grassBaseTower_1.png");
         this.towerImage = this.canvasManager.loadImage("img/turret_1.png");
+        this.crosshair = this.canvasManager.loadImage("img/crosshair_2.png");
         // TEST LEVEL
         this.currentLevel = new Level("test", 1500);
         this.money = this.currentLevel.initialMoney;
@@ -524,6 +540,7 @@ function Game(canvasManager)
         var currentEnemy = null;
         var currentTower = null;
         var enemyEnergyBarColor = "";
+        var crosshairPosition = new Vector2(0, 0);
         // DRAW ENEMIES
         for (var hordeIndex = 0; hordeIndex < this.currentLevel.hordes.length; hordeIndex++)
         {
@@ -534,6 +551,12 @@ function Game(canvasManager)
                 {
                     // DRAW ENEMY
                     this.canvasManager.drawCircle(currentEnemy.realPosition.x, currentEnemy.realPosition.y, 5, "white", "red");
+                    if (currentEnemy.targeted)
+                    {
+                        crosshairPosition.x = currentEnemy.realPosition.x - (this.crosshair.width / 2);
+                        crosshairPosition.y = currentEnemy.realPosition.y - (this.crosshair.height / 2);
+                        this.canvasManager.drawImage(this.crosshair, crosshairPosition.x, crosshairPosition.y);
+                    }
                     // DRAW ENERGY BAR
                     if (currentEnemy.energy > 50)
                         enemyEnergyBarColor = "green";
