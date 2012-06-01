@@ -176,8 +176,17 @@ function xAxisAngle(axisCenterPoint, point)
     var radAngle = 0;
     if (hypo != 0)
     {
-        var ady = point.x - axisCenterPoint.x;
-        radAngle = Math.acos(ady / hypo);
+        var xDiff = point.x - axisCenterPoint.x;
+        var yDiff = point.y - axisCenterPoint.y
+        var ady = Math.abs(xDiff);
+        var op = Math.abs(yDiff);
+        radAngle = Math.atan(op / ady);
+        if (xDiff > 0 && yDiff < 0)
+            radAngle *= -1;
+        else if (xDiff < 0 && yDiff > 0)
+            radAngle += (Math.PI / 2);
+        else if (xDiff < 0 && yDiff < 0)
+            radAngle += Math.PI;
     }
     return radAngle;
 }
