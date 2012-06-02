@@ -311,6 +311,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
         var radAngle;
         var degAngle;
         var angleDiff;
+        var inverseAngleDiff;
         var bullet = null;
         // UPDATE RELOAD TIMER
         if (this.reloadTimer < this.reloadTime)
@@ -325,6 +326,17 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
                 radAngle = yAxisAngle(this.realPosition, enemy.realPosition);
                 degAngle = Math.round(radToDeg(radAngle));
                 angleDiff = Math.abs(degAngle - this.turretAngle);
+                // TRYING TO MAKE A MORE INTELLIGENT SENSE OF ROTATION
+                // [-- START --]
+                inverseAngleDiff = Math.abs(degAngle - (this.turretAngle + 360));
+                if (angleDiff > 180)
+                {
+                    if (inverseAngleDiff < angleDiff)
+                        this.turretAngle += 360;
+                    else if (inverseAngleDiff > angleDiff)
+                        this.turretAngle -= 360;
+                }
+                // [-- END --]
                 if (this.turretAngle < degAngle)
                 {
                     if (angleDiff >= this.angularSpeed)
@@ -391,7 +403,7 @@ function EnemyFactory()
     {
         var enemy;
         if (type == "malito")
-            enemy = new Enemy(enemyOuid++, type, 0, 2, 1, 15, 15);
+            enemy = new Enemy(enemyOuid++, type, 0, 1, 1, 15, 15);
         return enemy;
     }
 }
@@ -403,7 +415,7 @@ function TowerFactory()
     {
         var tower = null;
         if (type == "chinoky")
-            tower = new Tower(towerOuid++, type, 150, 2, 1, 10);
+            tower = new Tower(towerOuid++, type, 100, 2, 1, 10);
         if (tower != null && isset(cellPosition))
             tower.setCellPosition(cellPosition);
         return tower;
@@ -466,7 +478,7 @@ function Game(canvasManager)
         path.addPoint(16, 8);
         this.currentLevel.addPath(path);
         // HORDE
-        var horde = new Horde(50, 30, path);
+        var horde = new Horde(20, 40, path);
         horde.addEnemies("malito", 10);
         var horde2 = new Horde(500, 30, path);
         horde2.addEnemies("malito", 15);
@@ -476,6 +488,9 @@ function Game(canvasManager)
         this.currentLevel.init();
         // TOWER TEST
         this.addTower("chinoky", new Vector2(155, 155));
+        this.addTower("chinoky", new Vector2(305, 255));
+        this.addTower("chinoky", new Vector2(455, 155));
+        this.addTower("chinoky", new Vector2(455, 355));
         this.state = "playing";
     }
     this.addTower = function(type, realPosition)
@@ -504,7 +519,6 @@ function Game(canvasManager)
             this.currentLevel.hordes[hordeIndex].doAction(this.gameTimer);
             enemiesInAction = enemiesInAction.concat(this.currentLevel.hordes[hordeIndex].enemiesInAction);
         }
-        //divDebug("Enemies:" + enemiesInAction.length.toString());
         // TOWERS ACTION
         for (var towerIndex = 0; towerIndex < this.towers.length; towerIndex++)
         {
@@ -519,7 +533,7 @@ function Game(canvasManager)
     {
         // CLEAR CANVAS
         this.canvasManager.clear();
-        // DIBUJAR ELEMENTOS DEL MAPA
+        // DRAW MAP CELLS
         for (var x = 0; x < this.currentLevel.map.width; x++)
         {
             for (var y = 0; y < this.currentLevel.map.height; y++)
@@ -573,6 +587,7 @@ function Game(canvasManager)
         {
             currentTower = this.towers[towerIndex];
             this.canvasManager.drawSprite(this.towerImage, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1);
+            this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
         }
         // TEXTS
         this.canvasManager.drawText(" $" + this.money + " action:" + this.gameTimer.toString(), 8, 18, "12pt Arial", "yellow");
@@ -589,10 +604,10 @@ function Game(canvasManager)
             this.drawAll();
         }
     }
-    // COMIENZA EL JUEGO
+    // START GAME
     this.start = function()
     {
-        this.interval = setInterval("juego.mainLoop()", 30);
+        this.interval = setInterval("juego.mainLoop()", 20);
     }
     // MOUSE EVENT
     this.mouseDown = function(realX, realY)
@@ -609,14 +624,14 @@ function Game(canvasManager)
     }    
 }
 
-// DEVUELVE COORDENADAS DE UNA CELDA A PARTIR DE LAS COORDENADAS REALES
+// RETURN CELL COORDINATES FROM REAL COORDINATES
 function getCellCoords(realX, realY)
 {
     var x = Math.floor(realX / 50);
     var y = Math.floor(realY / 50);
     return new Vector2(x, y);
 }
-// DEVUELVE COORDENADAS REALES A PARTIR DE COORDENADAS DE UNA CELDA
+// RETURN REAL COORDINATES FROM CELL COORDINATES
 function getRealCoords(cellX, cellY)
 {
     var x = (cellX * 50) + 25;
@@ -628,7 +643,7 @@ function divDebug(str)
 {
     document.getElementById("debugWindow").innerHTML = str;
 }
-// EVENTOS MOUSE
+// EVENTS
 function mouseDownHandler(ev)
 {
     var x, y;
