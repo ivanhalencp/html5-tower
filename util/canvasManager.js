@@ -184,7 +184,7 @@ function xAxisAngle(axisCenterPoint, point)
         if (xDiff > 0 && yDiff < 0)
             radAngle *= -1;
         else if (xDiff < 0 && yDiff > 0)
-            radAngle += (Math.PI / 2);
+            radAngle = Math.PI - radAngle;
         else if (xDiff < 0 && yDiff < 0)
             radAngle += Math.PI;
     }
