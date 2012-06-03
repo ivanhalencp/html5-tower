@@ -50,6 +50,7 @@ function Horde(actionTime, actionDelay, path)
     this.enemyActionIndex = 0;
     this.enemyDelayIndex = 0;
     this.currentQuadrant = 0;
+    this.active = true;
     this.relativeQuadrantPositions = new Array(5);
     this.relativeQuadrantPositions[0] = new Vector2(12, -12);
     this.relativeQuadrantPositions[1] = new Vector2(0, 0);
@@ -99,11 +100,12 @@ function Horde(actionTime, actionDelay, path)
                 enemy = this.enemiesInAction[enemyInActionIndex];
                 if (enemy.alive)
                 {
-                    enemy.targeted = false;
                     enemyBaseDamage = enemy.doAction(this.path);
                     baseDamage += enemyBaseDamage;
                     if (enemyBaseDamage > 0)
                         enemy.alive = false;
+                    // RESET ENEMY TARGETED
+                    enemy.targeted = false;
                 }
             }
         }
@@ -218,6 +220,9 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
     }
     this.doAction = function(path)
     {
+        // ENERGY BAR TEST
+        if (this.targeted)
+            this.onDamage(2);
         var baseDamage = 0;
         // MOVE INTO DE PATH
         var cellTarget = path.points[this.pathIndexTarget];
@@ -320,7 +325,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
         {
             // RANGE CHECK
             enemy = enemies[enemyIndex];
-            if (distance(this.realPosition, enemy.realPosition) <= this.attackRange)
+            if (enemy.alive && distance(this.realPosition, enemy.realPosition) <= this.attackRange)
             {                
                 enemyFound = true;                
                 radAngle = yAxisAngle(this.realPosition, enemy.realPosition);
@@ -424,16 +429,7 @@ function TowerFactory()
 
 function BulletFactory()
 {
-    var towerOuid = 0;
-    this.buildTower = function (type, cellPosition)
-    {
-        var tower = null;
-        if (type == "chinoky")
-            tower = new Tower(towerOuid++, type, 150, 2, 1, 10);
-        if (tower != null && isset(cellPosition))
-            tower.setCellPosition(cellPosition);
-        return tower;
-    }
+    // TODO
 }
 
 function Game(canvasManager)
@@ -477,11 +473,19 @@ function Game(canvasManager)
         path.addPoint(8, 8);
         path.addPoint(16, 8);
         this.currentLevel.addPath(path);
+        var path2 = new Path();
+        path2.addPoint(-1, 2);
+        path2.addPoint(6, 2);
+        path2.addPoint(6, 4);
+        path2.addPoint(8, 4);
+        path2.addPoint(8, 8);
+        path2.addPoint(16, 8);
+        this.currentLevel.addPath(path2);
         // HORDE
-        var horde = new Horde(20, 40, path);
-        horde.addEnemies("malito", 10);
-        var horde2 = new Horde(500, 30, path);
-        horde2.addEnemies("malito", 15);
+        var horde = new Horde(20, 50, path);
+        horde.addEnemies("malito", 30);
+        var horde2 = new Horde(50, 50, path2);
+        horde2.addEnemies("malito", 50);
         this.currentLevel.addHorde(horde);
         this.currentLevel.addHorde(horde2);
         // INIT LEVEL
