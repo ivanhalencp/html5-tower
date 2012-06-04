@@ -1,3 +1,4 @@
+// BASIC CELL MAP
 function LogicMap(width, height)
 {
     this.width = width;
@@ -183,12 +184,12 @@ function Level(name, initialMoney)
                 }
             }
         }
-        // FIX CORNERS
-        for (var pathPointIndex = 0; pathPointIndex < allPathPoints.length; pathPointIndex++)
+        // FIX CORNERS - ASSIGN A SPECIFIC TYPE FOR VISUALLY REPRESENTING THE CORNERS
+        /*for (var pathPointIndex = 0; pathPointIndex < allPathPoints.length; pathPointIndex++)
         {
+            // TODO : IMPLEMENT THIS !
             var pathPoint = allPathPoints[pathPointIndex];
-            // TODO...
-        }
+        }*/
     }
 }
 /*
@@ -290,6 +291,9 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
         return this.alive;
     }
 }
+/*
+ *  TOWER
+ */
 function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
 {
     this.id = id;
@@ -317,7 +321,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
         var degAngle;
         var angleDiff;
         var inverseAngleDiff;
-        var bullet = null;
+        var fireIntent = null;
         // UPDATE RELOAD TIMER
         if (this.reloadTimer < this.reloadTime)
             this.reloadTimer++;
@@ -365,8 +369,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
                     enemy.targeted = true;
                     if (this.reloadTimer == this.reloadTime)
                     {
-                        // TODO : FIRE !!
-                        // CREATE A BULLET AND RETURN IT !!
+                        fireIntent = new FireIntent(this, enemy);
                         // RESET RELOAD TIMER
                         this.reloadTimer = 0;
                     }
@@ -375,10 +378,14 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
             else
                 enemyIndex++;
         }
-        return bullet;
+        return fireIntent;
     }
 }
-
+function FireIntent(tower, enemy)
+{
+    this.tower = tower;
+    this.enemy = enemy;
+}
 function Bullet(id, type, speed, damage, damageRange)
 {
     this.id = id;
@@ -400,49 +407,62 @@ function Bullet(id, type, speed, damage, damageRange)
         // MOVE
     }
 }
-
+// USE IT TO CREATE AND GET A NEW ENEMY
 function EnemyFactory()
 {
     var enemyOuid = 0;
     this.getEnemy = function(type)
     {
         var enemy;
-        if (type == "malito")
-            enemy = new Enemy(enemyOuid++, type, 0, 1, 1, 15, 15);
+        switch (type)
+        {
+            case "malito":
+                enemy = new Enemy(enemyOuid++, type, 0, 1, 1, 15, 15);
+                break;
+        }
         return enemy;
     }
 }
-
+// USE IT TO CREATE AND GET A NEW TOWER
 function TowerFactory()
 {
     var towerOuid = 0;
     this.buildTower = function (type, cellPosition)
     {
         var tower = null;
-        if (type == "chinoky")
-            tower = new Tower(towerOuid++, type, 100, 2, 1, 10);
+        switch (type)
+        {
+            case "chinoky":
+                tower = new Tower(towerOuid++, type, 100, 2, 1, 10);
+                break;
+        }
         if (tower != null && isset(cellPosition))
             tower.setCellPosition(cellPosition);
         return tower;
     }
 }
-
+// USE IT TO CREATE AND GET A NEW BULLET
 function BulletFactory()
 {
     // TODO
 }
-
+// THE GAME (CANVAS MANAGER REQUIRED)
 function Game(canvasManager)
 {
     this.canvasManager = canvasManager;
     this.state = "initializing";
+    // FACTORIES
     this.towerFactory = new TowerFactory();
     this.enemyFactory = new EnemyFactory();
+    this.bulletFactory = new BulletFactory();
+    // COLLECTIONS OF ENTITIES
     this.enemies = new Array();
     this.towers = new Array();
     this.bullets = new Array();
     this.entities = new Array();
+    // TO ADD A NEW TOWER
     this.towerTypeSelected = null;
+    // REPRESENT THE CURRENT LEVEL WHERE IS PLAYING
     this.currentLevel = null;
     this.money = 0;
     this.score = 0;
@@ -524,9 +544,14 @@ function Game(canvasManager)
             enemiesInAction = enemiesInAction.concat(this.currentLevel.hordes[hordeIndex].enemiesInAction);
         }
         // TOWERS ACTION
+        var fireIntent = null;
         for (var towerIndex = 0; towerIndex < this.towers.length; towerIndex++)
         {
-            this.towers[towerIndex].doAction(enemiesInAction);
+            fireIntent = this.towers[towerIndex].doAction(enemiesInAction);
+            if (fireIntent != null)
+            {
+                // TODO : CREATE A BULLET
+            }
         }
     }
     // ********
@@ -598,14 +623,17 @@ function Game(canvasManager)
     }
     // SIMPLE GAME LOOP
     this.mainLoop = function ()
-    {
-        if (this.state == "initializing")
-            this.init();
-        if (this.state == "playing")
+    {        
+        switch (this.state)
         {
-            this.doActions();
-            this.drawMap();
-            this.drawAll();
+            case "initializing":
+                this.init();
+                break;
+            case "playing":
+                this.doActions();
+                this.drawMap();
+                this.drawAll();
+                break;
         }
     }
     // START GAME
@@ -627,7 +655,6 @@ function Game(canvasManager)
     {
     }    
 }
-
 // RETURN CELL COORDINATES FROM REAL COORDINATES
 function getCellCoords(realX, realY)
 {
