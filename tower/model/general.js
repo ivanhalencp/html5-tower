@@ -222,8 +222,8 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
     this.doAction = function(path)
     {
         // ENERGY BAR TEST
-        if (this.targeted)
-            this.onDamage(2);
+        /*if (this.targeted)
+            this.onDamage(2);*/
         var baseDamage = 0;
         // MOVE INTO DE PATH
         var cellTarget = path.points[this.pathIndexTarget];
@@ -321,7 +321,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
         var degAngle;
         var angleDiff;
         var inverseAngleDiff;
-        var fireIntent = null;
+        var shot = null;
         // UPDATE RELOAD TIMER
         if (this.reloadTimer < this.reloadTime)
             this.reloadTimer++;
@@ -369,7 +369,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
                     enemy.targeted = true;
                     if (this.reloadTimer == this.reloadTime)
                     {
-                        fireIntent = new FireIntent(this, enemy);
+                        shot = new Shot(this, enemy);
                         // RESET RELOAD TIMER
                         this.reloadTimer = 0;
                     }
@@ -378,10 +378,10 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
             else
                 enemyIndex++;
         }
-        return fireIntent;
+        return shot;
     }
 }
-function FireIntent(tower, enemy)
+function Shot(tower, enemy)
 {
     this.tower = tower;
     this.enemy = enemy;
@@ -394,17 +394,45 @@ function Bullet(id, type, speed, damage, damageRange)
     this.damage = damage;
     this.damageRange = damageRange;
     this.realPosition = null;
-    this.target = null;
+    this.enemyTarget = null;
     this.targetPosition = null;
-    this.init = function(realPosition, enemy)
+    this.distance = 0;
+    this.v2Speed = null;
+    this.active = true;
+    this.init = function(initPosition, enemy, angle)
     {
-        this.realPosition = realPosition;
-        this.targetPosition = enemy.realPosition;
-        this.target = enemy;
+        this.realPosition = initPosition;
+        this.targetPosition = enemy.realPosition.copy();
+        this.enemyTarget = enemy;
+        this.v2Speed = getDirectionVector(this.speed, degToRad(angle) - (Math.PI / 2));
     }
-    this.doAction = function(enemies)
+    this.doAction = function()
     {
-        // MOVE
+        var impact = false;
+        var targetDistance;
+        switch (this.type)
+        {
+            case "chinoky_bullet":
+                this.realPosition.add(this.v2Speed);
+                targetDistance = distance(this.realPosition, this.targetPosition)
+                if (targetDistance < this.speed)
+                    impact = true;
+                break;
+        }
+        if (impact)
+        {
+            if (this.enemyTarget.alive)
+            {
+                if (distance(this.realPosition, this.enemyTarget.realPosition) <= this.damageRange)
+                {
+                    this.enemyTarget.onDamage(this.damage);
+                    divDebug("impact...");
+                }
+                else
+                    divDebug("distance: " + distance(this.realPosition, this.enemyTarget.realPosition).toString());
+            }
+            this.active = false;
+        }
     }
 }
 // USE IT TO CREATE AND GET A NEW ENEMY
@@ -417,7 +445,7 @@ function EnemyFactory()
         switch (type)
         {
             case "malito":
-                enemy = new Enemy(enemyOuid++, type, 0, 1, 1, 15, 15);
+                enemy = new Enemy(enemyOuid++, type, 0, .5, 1, 15, 15);
                 break;
         }
         return enemy;
@@ -427,13 +455,13 @@ function EnemyFactory()
 function TowerFactory()
 {
     var towerOuid = 0;
-    this.buildTower = function (type, cellPosition)
+    this.buildTower = function(type, cellPosition)
     {
         var tower = null;
         switch (type)
         {
             case "chinoky":
-                tower = new Tower(towerOuid++, type, 100, 2, 1, 10);
+                tower = new Tower(towerOuid++, type, 100, 2, 1, 15);
                 break;
         }
         if (tower != null && isset(cellPosition))
@@ -444,7 +472,21 @@ function TowerFactory()
 // USE IT TO CREATE AND GET A NEW BULLET
 function BulletFactory()
 {
-    // TODO
+    var bulletOuid = 0;
+    this.buildBullet = function(shot)
+    {
+        var tower = shot.tower;
+        var bullet = null;
+        switch (tower.type)
+        {
+            case "chinoky":
+                bullet = new Bullet(bulletOuid++, "chinoky_bullet", 6, 10, 15);
+                break;
+        }
+        if (bullet != null)
+            bullet.init(tower.realPosition.copy(), shot.enemy, tower.turretAngle);
+        return bullet;
+    }
 }
 // THE GAME (CANVAS MANAGER REQUIRED)
 function Game(canvasManager)
@@ -502,9 +544,9 @@ function Game(canvasManager)
         path2.addPoint(16, 8);
         this.currentLevel.addPath(path2);
         // HORDE
-        var horde = new Horde(20, 50, path);
+        var horde = new Horde(20, 100, path);
         horde.addEnemies("malito", 30);
-        var horde2 = new Horde(50, 50, path2);
+        var horde2 = new Horde(50, 100, path2);
         horde2.addEnemies("malito", 50);
         this.currentLevel.addHorde(horde);
         this.currentLevel.addHorde(horde2);
@@ -544,14 +586,23 @@ function Game(canvasManager)
             enemiesInAction = enemiesInAction.concat(this.currentLevel.hordes[hordeIndex].enemiesInAction);
         }
         // TOWERS ACTION
-        var fireIntent = null;
+        var shot = null;
+        var bullet;
         for (var towerIndex = 0; towerIndex < this.towers.length; towerIndex++)
         {
-            fireIntent = this.towers[towerIndex].doAction(enemiesInAction);
-            if (fireIntent != null)
+            shot = this.towers[towerIndex].doAction(enemiesInAction);
+            if (shot != null)
             {
-                // TODO : CREATE A BULLET
+                bullet = this.bulletFactory.buildBullet(shot);
+                this.bullets.push(bullet);
             }
+        }
+        // BULLET ACTIONS
+        for (var bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++)
+        {
+            bullet = this.bullets[bulletIndex];
+            if (bullet.active)
+                bullet.doAction();
         }
     }
     // ********
@@ -582,6 +633,7 @@ function Game(canvasManager)
     {
         var currentEnemy = null;
         var currentTower = null;
+        var currentBullet = null;
         var enemyEnergyBarColor = "";
         var crosshairPosition = new Vector2(0, 0);
         // DRAW ENEMIES
@@ -618,8 +670,20 @@ function Game(canvasManager)
             this.canvasManager.drawSprite(this.towerImage, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1);
             this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
         }
+        // BULLETS
+        for (var bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++)
+        {
+            currentBullet = this.bullets[bulletIndex];
+            if (currentBullet.active)
+                this.canvasManager.drawCircle(currentBullet.realPosition.x, currentBullet.realPosition.y, 2, "blue", "#CCCCCC");
+        }
         // TEXTS
         this.canvasManager.drawText(" $" + this.money + " action:" + this.gameTimer.toString(), 8, 18, "12pt Arial", "yellow");
+    }
+    // DESTROY INACTIVE ENEMIES AND BULLETS
+    this.garbageCollect = function()
+    {
+        // TODO
     }
     // SIMPLE GAME LOOP
     this.mainLoop = function ()
