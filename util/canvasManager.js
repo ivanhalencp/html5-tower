@@ -125,6 +125,11 @@ function Vector2(x, y)
         else
             return false;
     }
+    this.copy = function()
+    {
+        var vector = new Vector2(this.x, this.y);
+        return vector;
+    }
 }
 // SIMPLE POINT
 function PathPoint(x, y)
@@ -195,4 +200,11 @@ function yAxisAngle(axisCenterPoint, point)
 {
     var radAngle = xAxisAngle(axisCenterPoint, point) + (Math.PI / 2);
     return radAngle;
+}
+// GET VECTOR DIRECTOR
+function getDirectionVector(magnitude, radAngle)
+{
+    var vx = magnitude * Math.cos(radAngle);
+    var vy = magnitude * Math.sin(radAngle);
+    return new Vector2(vx, vy);
 }
