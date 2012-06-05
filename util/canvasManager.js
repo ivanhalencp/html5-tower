@@ -185,13 +185,24 @@ function xAxisAngle(axisCenterPoint, point)
         var yDiff = point.y - axisCenterPoint.y
         var ady = Math.abs(xDiff);
         var op = Math.abs(yDiff);
-        radAngle = Math.atan(op / ady);
-        if (xDiff > 0 && yDiff < 0)
-            radAngle *= -1;
-        else if (xDiff < 0 && yDiff > 0)
-            radAngle = Math.PI - radAngle;
-        else if (xDiff < 0 && yDiff < 0)
-            radAngle += Math.PI;
+        if (ady != 0)
+        {
+            radAngle = Math.atan(op / ady);
+            if (xDiff > 0 && yDiff < 0)
+                radAngle *= -1;
+            else if (xDiff < 0 && yDiff > 0)
+                radAngle = Math.PI - radAngle;
+            else if (xDiff < 0 && yDiff < 0)
+                radAngle += Math.PI;
+        }
+        // FIX DIVISION BY ZERO
+        else
+        {
+            if (yDiff > 0)
+                radAngle = Math.PI / 2;
+            else
+                radAngle = Math.PI * 1.5;
+        }
     }
     return radAngle;
 }
