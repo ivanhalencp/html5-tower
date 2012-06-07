@@ -12,6 +12,7 @@ function Horde(actionTime, actionDelay, path)
     this.enemyFactory = new EnemyFactory();
     this.enemies = new Array();
     this.enemiesInAction = new Array();
+    this.enemiesInActionCounter = 0;
     this.path = path;
     this.enemyActionIndex = 0;
     this.enemyDelayIndex = 0;
@@ -56,6 +57,7 @@ function Horde(actionTime, actionDelay, path)
                         this.currentQuadrant = 0;
                     enemy.inAction = true;
                     this.enemiesInAction.push(enemy);
+                    this.enemiesInActionCounter++;
                     this.enemyActionIndex++;
                     this.enemyDelayIndex = 0;
                 }

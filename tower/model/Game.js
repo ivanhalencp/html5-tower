@@ -55,9 +55,9 @@ function Game(canvasManager)
         this.currentLevel.addPath(path2);
         // HORDE
         var horde = new Horde(20, 100, path);
-        horde.addEnemies("malito", 100);
+        horde.addEnemies("malito", 5);
         var horde2 = new Horde(50, 100, path2);
-        horde2.addEnemies("malito", 150);
+        horde2.addEnemies("malito", 2);
         this.currentLevel.addHorde(horde);
         this.currentLevel.addHorde(horde2);
         // INIT LEVEL
@@ -211,23 +211,14 @@ function Game(canvasManager)
                 {
                     enemyIndex++;
                     enemiesAlive = true;
-                    //divDebug(enemy.inAction.toString() + ", index: " + enemyIndex);
                 }
                 else
-                {
                     horde.enemiesInAction.splice(enemyIndex, 1);
-                    //divDebug("destroy enemy...");
-                }
             }
-            hordeIndex++;
-            /*if (enemiesAlive || !horde.inAction)
+            if (enemiesAlive || horde.enemiesInActionCounter < horde.enemies.length)
                 hordeIndex++;
             else
-            {
                 this.currentLevel.hordes.splice(hordeIndex, 1);
-                divDebug("destroy horde...");
-                //this.state = "paused";
-            }*/
         }
         // BULLETS
         var bulletIndex = 0;
@@ -238,10 +229,7 @@ function Game(canvasManager)
             if (bullet.active)
                 bulletIndex++;
             else
-            {
                 this.bullets.splice(bulletIndex, 1);
-                //divDebug("destroy bullet...");
-            }
         }
     }
     // SIMPLE GAME LOOP
