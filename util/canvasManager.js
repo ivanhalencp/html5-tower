@@ -1,3 +1,6 @@
+// @By ICP (ivanhalen@gmail.com)
+//
+//
 function CanvasManager(canvasId)
 {
     this.canvas = document.getElementById(canvasId);
