@@ -3,10 +3,12 @@
  */
 function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime)
 {
+    // ENTITIES SUPERCLASS (GAMEENTITY)
+    this.superClass = GameEntity;
+    this.superClass();
     this.id = id;
     this.type = type;
     this.cellPosition = new Vector2(0, 0);
-    this.realPosition = new Vector2(0, 0);
     this.attackRange = attackRange;
     this.angularSpeed = angularSpeed;
     this.bulletType = bulletType;

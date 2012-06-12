@@ -1,11 +1,16 @@
+/*
+ * BULLET
+ */
 function Bullet(id, type, speed, damage, damageRange)
 {
+    // ENTITIES SUPERCLASS (GAMEENTITY)
+    this.superClass = GameEntity;
+    this.superClass();
     this.id = id;
     this.type = type;
     this.speed = speed;
     this.damage = damage;
     this.damageRange = damageRange;
-    this.realPosition = null;
     this.enemyTarget = null;
     this.targetPosition = null;
     this.distance = 0;

@@ -3,6 +3,9 @@
  */
 function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
 {
+    // ENTITIES SUPERCLASS (GAMEENTITY)
+    this.superClass = GameEntity;
+    this.superClass();
     this.id = id;
     this.type = type;
     this.armor = armor;
@@ -10,7 +13,6 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
     this.damage = damage;
     this.scoreReward = scoreReward;
     this.moneyReward = moneyReward;
-    this.realPosition = new Vector2(0, 0);
     this.relativePosition = new Vector2(0, 0);
     this.energy = 100;
     this.inAction = false;
@@ -18,10 +20,6 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
     this.pathIndexTarget = 1;
     // TO DRAW SPRITE IN DIRECTION (2 : DOWN , 4 : LEFT, 6 : RIGHT, 8 : UP, 5 : NO INITIALIZED)
     this.direction = 5;
-    // TO KNOW WHEN ANIMATION FINISH
-    this.animationFrames = 0;
-    // TO DRAW CURRENT ANIMATION FRAME
-    this.animationIndex = 0;
     // TO DRAW / OR NOT CROSSHAIRS OVER THE SPRITE
     this.targeted = false;
     this.setRelativePosition = function(relativePosition)

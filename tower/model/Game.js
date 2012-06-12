@@ -2,6 +2,8 @@
 function Game(canvasManager)
 {
     this.canvasManager = canvasManager;
+    this.resourceManager = new ResourceManager();
+    this.animationManager = new AnimationManager(this.resourceManager);
     this.state = "initializing";
     // FACTORIES
     this.towerFactory = new TowerFactory();
@@ -20,19 +22,13 @@ function Game(canvasManager)
     this.score = 0;
     this.gameTimer = 0;
     this.interval = null;
-    this.grassImage = null;
-    this.roadImage = null;
     // INIT ALL
-    this.init = function ()
+    this.init = function()
     {
         // EVENTOS
         //this.canvasManager.onMouseDown(mouseDownHandler);
         // LOAD IMAGE DATA
-        this.grassImage = this.canvasManager.loadImage("img/grass_1.png");
-        this.roadImage = this.canvasManager.loadImage("img/road_1.png");
-        this.grassBaseTower = this.canvasManager.loadImage("img/grassBaseTower_1.png");
-        this.towerImage = this.canvasManager.loadImage("img/turret_1.png");
-        this.crosshair = this.canvasManager.loadImage("img/crosshair_2.png");
+        this.resourceManager.init(this.canvasManager);
         // TEST LEVEL
         this.currentLevel = new Level("test", 1500);
         this.money = this.currentLevel.initialMoney;
@@ -130,17 +126,18 @@ function Game(canvasManager)
             {
                 typeId = this.currentLevel.map.getLogicCell(x, y);
                 if (typeId == 0)
-                    this.canvasManager.drawImage(this.grassImage, x * 50, y * 50);
+                    this.canvasManager.drawImage(this.resourceManager.grassImage, x * 50, y * 50);
                 else if (typeId == 1)
-                    this.canvasManager.drawImage(this.roadImage, x * 50, y * 50);
+                    this.canvasManager.drawImage(this.resourceManager.roadImage, x * 50, y * 50);
                 else if (typeId == 2)
-                    this.canvasManager.drawImage(this.grassBaseTower, x * 50, y * 50);
+                    this.canvasManager.drawImage(this.resourceManager.grassBaseTower, x * 50, y * 50);
             }
         }
     }
     // DRAW ALL ENTITIES (ENEMIES / TOWERS / BULLETS)
     this.drawAll = function()
     {
+        var animation;
         var currentEnemy = null;
         var currentTower = null;
         var currentBullet = null;
@@ -155,12 +152,16 @@ function Game(canvasManager)
                 if (currentEnemy.alive)
                 {
                     // DRAW ENEMY
-                    this.canvasManager.drawCircle(currentEnemy.realPosition.x, currentEnemy.realPosition.y, 5, "white", "red");
+                    //this.canvasManager.drawCircle(currentEnemy.realPosition.x, currentEnemy.realPosition.y, 5, "white", "red");
+                    animation = this.animationManager.getAnimation(currentEnemy);
+                    this.canvasManager.drawSprite(animation.imageSrc, currentEnemy.realPosition.x, currentEnemy.realPosition.y, 0, 1, animation.frameRect);
+                    //this.canvasManager.drawCircle(currentEnemy.realPosition.x, currentEnemy.realPosition.y, 5, "white", "red");
                     if (currentEnemy.targeted)
                     {
-                        crosshairPosition.x = currentEnemy.realPosition.x - (this.crosshair.width / 2);
-                        crosshairPosition.y = currentEnemy.realPosition.y - (this.crosshair.height / 2);
-                        this.canvasManager.drawImage(this.crosshair, crosshairPosition.x, crosshairPosition.y);
+                        crosshairPosition.x = currentEnemy.realPosition.x - (this.resourceManager.crosshairImage.width / 2);
+                        crosshairPosition.y = currentEnemy.realPosition.y - (this.resourceManager.crosshairImage.height / 2);
+                        // DRAW CROSSHAIR WHEN ENEMY IS TARGETED
+                        this.canvasManager.drawImage(this.resourceManager.crosshairImage, crosshairPosition.x, crosshairPosition.y);
                     }
                     // DRAW ENERGY BAR
                     if (currentEnemy.energy > 50)
@@ -177,7 +178,10 @@ function Game(canvasManager)
         for (var towerIndex = 0; towerIndex < this.towers.length; towerIndex++)
         {
             currentTower = this.towers[towerIndex];
-            this.canvasManager.drawSprite(this.towerImage, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1);
+            animation = this.animationManager.getAnimation(currentTower);
+            //this.canvasManager.drawSprite(this.resourceManager.towerImage, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1);
+            this.canvasManager.drawSprite(animation.imageSrc, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1, animation.frameRect);
+            // DRAW ATTACK RANGE
             this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
         }
         // BULLETS
@@ -189,6 +193,11 @@ function Game(canvasManager)
         }
         // TEXTS
         this.canvasManager.drawText(" $" + this.money + " action:" + this.gameTimer.toString(), 8, 18, "12pt Arial", "yellow");
+    }
+    // ANIMATE ALL ENTITIES
+    this.animateAll = function()
+    {
+        this.animationManager.doAnimations();
     }
     // DESTROY INACTIVE ENEMIES, HORDES AND BULLETS
     this.deadBodiesCollect = function()
@@ -244,6 +253,7 @@ function Game(canvasManager)
                 this.doActions();
                 this.drawMap();
                 this.drawAll();
+                this.animateAll();
                 this.deadBodiesCollect();
                 break;
         }

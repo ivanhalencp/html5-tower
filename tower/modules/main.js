@@ -1,31 +1,35 @@
+$include("model/Animation.js");
+$include("model/AnimationManager.js");
 $include("model/Bullet.js");
 $include("model/Enemy.js");
 $include("model/Factories.js");
 $include("model/Game.js");
+$include("model/GameEntity.js");
 $include("model/Horde.js");
 $include("model/Level.js");
 $include("model/LogicMap.js");
 $include("model/Shot.js");
 $include("model/Tower.js");
 
-// SIMPLE ANIMATION
-/* function Animation(imageSrc, frameRect, framesCount, delay)
+function ResourceManager()
 {
-    this.imageSrc = imageSrc;
-    this.frameRect = frameRect;
-    this.framesCount = framesCount;
-    this.delay = delay;
-    this.frameIndex = 0;
-    this.drawCurrentFrame = function(canvasManager, realPosition, angle)
+    this.grassImage = null;
+    this.roadImage = null;
+    this.grassBaseTower = null;
+    this.towerImage = null;
+    this.crosshairImage = null;
+    this.alienImage = null;
+    // INIT
+    this.init = function(canvasManager)
     {
-        // TODO
+        this.grassImage = canvasManager.loadImage("img/grass_1.png");
+        this.roadImage = canvasManager.loadImage("img/road_1.png");
+        this.grassBaseTower = canvasManager.loadImage("img/grassBaseTower_1.png");
+        this.towerImage = canvasManager.loadImage("img/turret_2.png");
+        this.crosshairImage = canvasManager.loadImage("img/crosshair_2.png");
+        this.alienImage = canvasManager.loadImage("img/alien_1.png");
     }
 }
-function AnimationManager()
-{
-    // TODO : IMPLEMENT THIS!
-}*/
-
 
 // RETURN CELL COORDINATES FROM REAL COORDINATES
 function getCellCoords(realX, realY)
