@@ -51,9 +51,9 @@ function Game(canvasManager)
         this.currentLevel.addPath(path2);
         // HORDE
         var horde = new Horde(20, 100, path);
-        horde.addEnemies("malito", 5);
+        horde.addEnemies("malito", 50);
         var horde2 = new Horde(50, 100, path2);
-        horde2.addEnemies("malito", 2);
+        horde2.addEnemies("malito", 72);
         this.currentLevel.addHorde(horde);
         this.currentLevel.addHorde(horde2);
         // INIT LEVEL
@@ -138,6 +138,7 @@ function Game(canvasManager)
     this.drawAll = function()
     {
         var animation;
+        var enemyAngle = 0;
         var currentEnemy = null;
         var currentTower = null;
         var currentBullet = null;
@@ -154,7 +155,7 @@ function Game(canvasManager)
                     // DRAW ENEMY
                     //this.canvasManager.drawCircle(currentEnemy.realPosition.x, currentEnemy.realPosition.y, 5, "white", "red");
                     animation = this.animationManager.getAnimation(currentEnemy);
-                    this.canvasManager.drawSprite(animation.imageSrc, currentEnemy.realPosition.x, currentEnemy.realPosition.y, 0, 1, animation.frameRect);
+                    this.canvasManager.drawSprite(animation.imageSrc, currentEnemy.realPosition.x, currentEnemy.realPosition.y, currentEnemy.realAngle, 1, animation.frameRect);
                     //this.canvasManager.drawCircle(currentEnemy.realPosition.x, currentEnemy.realPosition.y, 5, "white", "red");
                     if (currentEnemy.targeted)
                     {

@@ -4,4 +4,5 @@ function GameEntity()
     this.type = "";
     this.animationIndex = -1;
     this.realPosition = null;
+    this.realAngle = 0;
 }

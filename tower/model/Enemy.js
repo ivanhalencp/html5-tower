@@ -44,6 +44,7 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
             v2Speed = new Vector2(scalarSpeed, 0);
             // [ MOVE TO THE RIGHT ]
             this.direction = 6;
+            this.realAngle = 0;
         }
         else if (this.realPosition.x > realTarget.x)
         {
@@ -52,6 +53,7 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
             v2Speed = new Vector2(scalarSpeed * -1, 0);
             // [ MOVE TO THE LEFT ]
             this.direction = 4;
+            this.realAngle = Math.PI;
         }
         else if (this.realPosition.y < realTarget.y)
         {
@@ -60,6 +62,7 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
             v2Speed = new Vector2(0, scalarSpeed);
             // [ MOVE DOWN ]
             this.direction = 2;
+            this.realAngle = Math.PI / 2;
         }
         else if (this.realPosition.y > realTarget.y)
         {
@@ -68,6 +71,7 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
             v2Speed = new Vector2(0, scalarSpeed * -1);
             // [ MOVE UP ]
             this.direction = 8;
+            this.realAngle = 1.5 * Math.PI;
         }
         // ADD V2 SPEED
         this.realPosition.add(v2Speed);
