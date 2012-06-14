@@ -3,6 +3,20 @@
   <head>
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" language="javascript" src="tower/util/canvasManager.js"></script>
+    <script type="text/javascript" language="javascript" src="tower/util/jsMiniUtil.js"></script>
+    <script type="text/javascript" language="javascript" src="tower/modules/main.js"></script>
+    <script language="javascript" type="text/javascript">
+        var canvasManager = null;
+        var juego = null;
+        function init()
+        {
+            canvasManager = new CanvasManager("mainCanvas");
+            juego = new Game(canvasManager);
+            juego.start();            
+
+        }
+    </script>
     <style type="text/css">
         body
         {
@@ -12,11 +26,19 @@
         }
     </style>
   </head>
-  <body>
+  <body onload = "init()" bgcolor = "black">
       <br />
       <br />
       <center>
-        <a href="tower/index.html">TOWER</a>
-      </center>
+        TOWER
+        <br /><br />
+        <div id = "mainCanvasContainer">
+            <canvas id = "mainCanvas" width = '800px' height = '600px'>
+                <b>Canvas no soportado :(</b>
+            </canvas>
+        </div>
+        <br /><br />
+        <div id="debugWindow" style="width: 800px; height: 400px;"></div>
+    </center>
   </body>
 </html>

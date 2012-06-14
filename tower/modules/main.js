@@ -1,15 +1,17 @@
-$include("model/Animation.js");
-$include("model/AnimationManager.js");
-$include("model/Bullet.js");
-$include("model/Enemy.js");
-$include("model/Factories.js");
-$include("model/Game.js");
-$include("model/GameEntity.js");
-$include("model/Horde.js");
-$include("model/Level.js");
-$include("model/LogicMap.js");
-$include("model/Shot.js");
-$include("model/Tower.js");
+var relPath = "tower/";
+
+$include(relPath + "model/Animation.js");
+$include(relPath + "model/AnimationManager.js");
+$include(relPath + "model/Bullet.js");
+$include(relPath + "model/Enemy.js");
+$include(relPath + "model/Factories.js");
+$include(relPath + "model/Game.js");
+$include(relPath + "model/GameEntity.js");
+$include(relPath + "model/Horde.js");
+$include(relPath + "model/Level.js");
+$include(relPath + "model/LogicMap.js");
+$include(relPath + "model/Shot.js");
+$include(relPath + "model/Tower.js");
 
 function ResourceManager()
 {
@@ -22,12 +24,12 @@ function ResourceManager()
     // INIT
     this.init = function(canvasManager)
     {
-        this.grassImage = canvasManager.loadImage("img/grass_1.png");
-        this.roadImage = canvasManager.loadImage("img/road_1.png");
-        this.grassBaseTower = canvasManager.loadImage("img/grassBaseTower_1.png");
-        this.towerImage = canvasManager.loadImage("img/turret_2.png");
-        this.crosshairImage = canvasManager.loadImage("img/crosshair_2.png");
-        this.alienImage = canvasManager.loadImage("img/alien_1.png");
+        this.grassImage = canvasManager.loadImage(relPath + "img/grass_1.png");
+        this.roadImage = canvasManager.loadImage(relPath + "img/road_1.png");
+        this.grassBaseTower = canvasManager.loadImage(relPath + "img/grassBaseTower_1.png");
+        this.towerImage = canvasManager.loadImage(relPath + "img/turret_2.png");
+        this.crosshairImage = canvasManager.loadImage(relPath + "img/crosshair_2.png");
+        this.alienImage = canvasManager.loadImage(relPath + "img/alien_1.png");
     }
 }
 
