@@ -9,7 +9,7 @@ function BulletFactory()
         switch (tower.type)
         {
             case "chinoky":
-                bullet = new Bullet(bulletOuid++, "chinoky_bullet", 6, 10, 15);
+                bullet = new Bullet(bulletOuid++, "chinoky_bullet", 6, 15, 15);
                 break;
         }
         if (bullet != null)
@@ -29,6 +29,9 @@ function EnemyFactory()
             case "malito":
                 enemy = new Enemy(enemyOuid++, type, 0, .7, 1, 15, 15);
                 break;
+            case "maluko":
+                enemy = new Enemy(enemyOuid++, type, 5, .7, 2, 20, 20);
+                break;
         }
         return enemy;
     }
@@ -43,7 +46,7 @@ function TowerFactory()
         switch (type)
         {
             case "chinoky":
-                tower = new Tower(towerOuid++, type, 100, 2, 1, 15);
+                tower = new Tower(towerOuid++, type, 70, 2, 1, 20);
                 break;
         }
         if (tower != null && isset(cellPosition))
