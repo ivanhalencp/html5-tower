@@ -32,6 +32,10 @@ function AnimationManager(resourceManager)
                     image = this.resourceManager.getImage('alien_2');
                     animation = new Animation(image, image.width / 4, image.height, 4, 15);
                     break;
+                case "maluko":
+                    image = this.resourceManager.alien2Image;
+                    animation = new Animation(image, image.width / 4, image.height, 4, 15);
+                    break;
             }
         }
         // BULLETS

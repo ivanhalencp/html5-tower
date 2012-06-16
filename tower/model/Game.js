@@ -29,12 +29,18 @@ function Game(canvasManager)
         //this.canvasManager.onMouseDown(mouseDownHandler);
         // LOAD IMAGE DATA
         this.resourceManager.init(this.canvasManager);
+<<<<<<< HEAD
         //alert ("arranco check...");
         //var errLoop = 0;
         while (!this.resourceManager.allImagesLoaded() && errLoop < 200)
         {
             // LOADING...
             //errLoop++;
+=======
+        while (!this.resourceManager.allImagesLoaded)
+        {
+            // LOADING...
+>>>>>>> Test distintos enemigos
         }
         // TEST LEVEL
         this.currentLevel = new Level("test", 1500);
