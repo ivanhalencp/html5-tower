@@ -29,6 +29,10 @@ function Game(canvasManager)
         //this.canvasManager.onMouseDown(mouseDownHandler);
         // LOAD IMAGE DATA
         this.resourceManager.init(this.canvasManager);
+        while (!this.resourceManager.allImagesLoaded)
+        {
+            // LOADING...
+        }
         // TEST LEVEL
         this.currentLevel = new Level("test", 1500);
         this.money = this.currentLevel.initialMoney;
@@ -51,7 +55,10 @@ function Game(canvasManager)
         this.currentLevel.addPath(path2);
         // HORDE
         var horde = new Horde(20, 100, path);
-        horde.addEnemies("malito", 50);
+        horde.addEnemies("malito", 15);
+        horde.addEnemies("maluko", 5);
+        horde.addEnemies("malito", 5);
+        horde.addEnemies("maluko", 5);
         var horde2 = new Horde(50, 100, path2);
         horde2.addEnemies("malito", 72);
         this.currentLevel.addHorde(horde);
@@ -183,7 +190,7 @@ function Game(canvasManager)
             //this.canvasManager.drawSprite(this.resourceManager.towerImage, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1);
             this.canvasManager.drawSprite(animation.imageSrc, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1, animation.frameRect);
             // DRAW ATTACK RANGE
-            this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
+            //this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
         }
         // BULLETS
         for (var bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++)
