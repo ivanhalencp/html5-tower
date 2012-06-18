@@ -29,9 +29,12 @@ function Game(canvasManager)
         //this.canvasManager.onMouseDown(mouseDownHandler);
         // LOAD IMAGE DATA
         this.resourceManager.init(this.canvasManager);
-        while (!this.resourceManager.allImagesLoaded)
+        //alert ("arranco check...");
+        //var errLoop = 0;
+        while (!this.resourceManager.allImagesLoaded() && errLoop < 200)
         {
             // LOADING...
+            //errLoop++;
         }
         // TEST LEVEL
         this.currentLevel = new Level("test", 1500);
@@ -133,11 +136,11 @@ function Game(canvasManager)
             {
                 typeId = this.currentLevel.map.getLogicCell(x, y);
                 if (typeId == 0)
-                    this.canvasManager.drawImage(this.resourceManager.grassImage, x * 50, y * 50);
+                    this.canvasManager.drawImage(this.resourceManager.getImage('grass'), x * 50, y * 50);
                 else if (typeId == 1)
-                    this.canvasManager.drawImage(this.resourceManager.roadImage, x * 50, y * 50);
+                    this.canvasManager.drawImage(this.resourceManager.getImage('road'), x * 50, y * 50);
                 else if (typeId == 2)
-                    this.canvasManager.drawImage(this.resourceManager.grassBaseTower, x * 50, y * 50);
+                    this.canvasManager.drawImage(this.resourceManager.getImage('towerBase'), x * 50, y * 50);
             }
         }
     }
@@ -145,7 +148,7 @@ function Game(canvasManager)
     this.drawAll = function()
     {
         var animation;
-        var enemyAngle = 0;
+        //var enemyAngle = 0;
         var currentEnemy = null;
         var currentTower = null;
         var currentBullet = null;
@@ -166,10 +169,10 @@ function Game(canvasManager)
                     //this.canvasManager.drawCircle(currentEnemy.realPosition.x, currentEnemy.realPosition.y, 5, "white", "red");
                     if (currentEnemy.targeted)
                     {
-                        crosshairPosition.x = currentEnemy.realPosition.x - (this.resourceManager.crosshairImage.width / 2);
-                        crosshairPosition.y = currentEnemy.realPosition.y - (this.resourceManager.crosshairImage.height / 2);
+                        crosshairPosition.x = currentEnemy.realPosition.x - (this.resourceManager.getImage('crosshair').width / 2);
+                        crosshairPosition.y = currentEnemy.realPosition.y - (this.resourceManager.getImage('crosshair').height / 2);
                         // DRAW CROSSHAIR WHEN ENEMY IS TARGETED
-                        this.canvasManager.drawImage(this.resourceManager.crosshairImage, crosshairPosition.x, crosshairPosition.y);
+                        this.canvasManager.drawImage(this.resourceManager.getImage('crosshair'), crosshairPosition.x, crosshairPosition.y);
                     }
                     // DRAW ENERGY BAR
                     if (currentEnemy.energy > 50)
