@@ -1,5 +1,4 @@
 var relPath = "tower/";
-<<<<<<< HEAD
 
 $include(relPath + "model/Animation.js");
 $include(relPath + "model/AnimationManager.js");
@@ -14,51 +13,6 @@ $include(relPath + "model/LogicMap.js");
 $include(relPath + "model/ResourceManager.js");
 $include(relPath + "model/Shot.js");
 $include(relPath + "model/Tower.js");
-=======
-
-$include(relPath + "model/Animation.js");
-$include(relPath + "model/AnimationManager.js");
-$include(relPath + "model/Bullet.js");
-$include(relPath + "model/Enemy.js");
-$include(relPath + "model/Factories.js");
-$include(relPath + "model/Game.js");
-$include(relPath + "model/GameEntity.js");
-$include(relPath + "model/Horde.js");
-$include(relPath + "model/Level.js");
-$include(relPath + "model/LogicMap.js");
-$include(relPath + "model/Shot.js");
-$include(relPath + "model/Tower.js");
-
-function ResourceManager()
-{
-    this.grassImage = null;
-    this.roadImage = null;
-    this.grassBaseTower = null;
-    this.towerImage = null;
-    this.crosshairImage = null;
-    this.alienImage = null;
-    this.alien2Image = null;
-    this.imagesLoaded = 0;
-    this.allImagesLoaded = false;
-    // INIT
-    this.init = function(canvasManager)
-    {
-        this.grassImage = canvasManager.loadImage(relPath + "img/grass_2.png", this.imageLoaded(this));
-        this.roadImage = canvasManager.loadImage(relPath + "img/road_1.png", this.imageLoaded(this));
-        this.grassBaseTower = canvasManager.loadImage(relPath + "img/grassBaseTower_2.png", this.imageLoaded(this));
-        this.towerImage = canvasManager.loadImage(relPath + "img/turret_2.png", this.imageLoaded(this));
-        this.crosshairImage = canvasManager.loadImage(relPath + "img/crosshair_2.png", this.imageLoaded(this));
-        this.alienImage = canvasManager.loadImage(relPath + "img/alien_2.png", this.imageLoaded(this));
-        this.alien2Image = canvasManager.loadImage(relPath + "img/alien_3.png", this.imageLoaded(this));
-    }
-    this.imageLoaded = function(resourceManager)
-    {
-        resourceManager.imagesLoaded++;
-        if (resourceManager.imagesLoaded == 7)
-            resourceManager.allImagesLoaded = true;
-    }
-}
->>>>>>> Fix de rutas para que corra como gh-page
 
 // RETURN CELL COORDINATES FROM REAL COORDINATES
 function getCellCoords(realX, realY)
