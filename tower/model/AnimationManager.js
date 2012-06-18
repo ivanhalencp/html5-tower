@@ -14,7 +14,7 @@ function AnimationManager(resourceManager)
             switch (entity.type)
             {
                 case "chinoky":
-                    image = this.resourceManager.towerImage;
+                    image = this.resourceManager.getImage('tower');
                     animation = new Animation(image, image.width / 2, image.height, 2, 15);
                     break;
             }
@@ -25,11 +25,11 @@ function AnimationManager(resourceManager)
             switch (entity.type)
             {
                 case "malito":                    
-                    image = this.resourceManager.alienImage;
+                    image = this.resourceManager.getImage('alien_1');
                     animation = new Animation(image, image.width / 4, image.height, 4, 15);
                     break;
                 case "maluko":
-                    image = this.resourceManager.alien2Image;
+                    image = this.resourceManager.getImage('alien_2');
                     animation = new Animation(image, image.width / 4, image.height, 4, 15);
                     break;
             }
