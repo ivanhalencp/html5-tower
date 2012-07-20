@@ -22,6 +22,7 @@ function Game(canvasManager)
     this.score = 0;
     this.gameTimer = 0;
     this.interval = null;
+    this.bgImageData = null;
     // INIT ALL
     this.init = function()
     {
@@ -127,22 +128,31 @@ function Game(canvasManager)
     // DRAW MAP
     this.drawMap = function()
     {
-        // CLEAR CANVAS
-        this.canvasManager.clear();
-        // DRAW MAP CELLS
-        for (var x = 0; x < this.currentLevel.map.width; x++)
+        if (this.bgImageData == null)
         {
-            for (var y = 0; y < this.currentLevel.map.height; y++)
+            // CLEAR CANVAS
+            this.canvasManager.clear();
+            // DRAW MAP CELLS
+            for (var x = 0; x < this.currentLevel.map.width; x++)
             {
-                typeId = this.currentLevel.map.getLogicCell(x, y);
-                if (typeId == 0)
-                    this.canvasManager.drawImage(this.resourceManager.getImage('grass'), x * 50, y * 50);
-                else if (typeId == 1)
-                    this.canvasManager.drawImage(this.resourceManager.getImage('road'), x * 50, y * 50);
-                else if (typeId == 2)
-                    this.canvasManager.drawImage(this.resourceManager.getImage('towerBase'), x * 50, y * 50);
+                for (var y = 0; y < this.currentLevel.map.height; y++)
+                {
+                    typeId = this.currentLevel.map.getLogicCell(x, y);
+                    if (typeId == 0)
+                        this.canvasManager.drawImage(this.resourceManager.getImage('grass'), x * 50, y * 50);
+                    else if (typeId == 1)
+                        this.canvasManager.drawImage(this.resourceManager.getImage('road'), x * 50, y * 50);
+                    else if (typeId == 2)
+                    {
+                        this.canvasManager.drawImage(this.resourceManager.getImage('grass'), x * 50, y * 50);
+                        this.canvasManager.drawImage(this.resourceManager.getImage('towerBase'), x * 50, y * 50);
+                    }
+                }
             }
+            this.bgImageData = this.canvasManager.getImageData();
         }
+        else
+            this.canvasManager.putImageData(this.bgImageData);
     }
     // DRAW ALL ENTITIES (ENEMIES / TOWERS / BULLETS)
     this.drawAll = function()
@@ -272,7 +282,7 @@ function Game(canvasManager)
     // START GAME
     this.start = function()
     {
-        this.interval = setInterval("juego.mainLoop()", 20);
+        this.interval = setInterval("juego.mainLoop()", 25);
     }
     // MOUSE EVENT
     this.mouseDown = function(realX, realY)
