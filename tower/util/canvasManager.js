@@ -85,6 +85,22 @@ function CanvasManager(canvasId)
         this.context.drawImage(image, section.x, section.y, section.width, section.height, -section.width/2, -section.height/2, section.width, section.height);
         this.context.restore();
     }
+    // SAVE IMA
+    this.getImageData = function(section)
+    {
+        if (!isset(section))
+            section = new Rectangle(0, 0, this.width, this.height);
+        var imageData = this.context.getImageData(section.x, section.y, section.width, section.height);
+        return imageData;
+    }
+    this.putImageData = function(imageData, x, y)
+    {
+        if (!isset(x))
+            x = 0;
+        if (!isset(y))
+            y = 0;
+        this.context.putImageData(imageData, x, y);
+    }
 }
 // SIMPLE RECTANGLE IMPLEMENTATION
 function Rectangle(x, y, width, height)
