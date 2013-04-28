@@ -23,6 +23,8 @@ function Game(canvasManager)
     this.gameTimer = 0;
     this.interval = null;
     this.bgImageData = null;
+    this.drawMapMode = "bitmap"; // bitmap, redraw
+    this.mapRedrawRequired = false;
     // INIT ALL
     this.init = function()
     {
@@ -70,10 +72,10 @@ function Game(canvasManager)
         // INIT LEVEL
         this.currentLevel.init();
         // TOWER TEST
-        this.addTower("chinoky", new Vector2(155, 155));
+        /* this.addTower("chinoky", new Vector2(155, 155));
         this.addTower("chinoky", new Vector2(305, 255));
         this.addTower("chinoky", new Vector2(455, 155));
-        this.addTower("chinoky", new Vector2(455, 355));
+        this.addTower("chinoky", new Vector2(455, 355)); */
         this.state = "playing";
     }
     this.addTower = function(type, realPosition)
@@ -87,6 +89,7 @@ function Game(canvasManager)
             this.towers.push(tower);
             towerAdded = true;
         }
+        this.mapRedrawRequired = true;
         return towerAdded;
     }
     // **********
@@ -128,7 +131,7 @@ function Game(canvasManager)
     // DRAW MAP
     this.drawMap = function()
     {
-        if (this.bgImageData == null)
+        if (this.bgImageData == null || this.drawMapMode == "redraw" || this.mapRedrawRequired)
         {
             // CLEAR CANVAS
             this.canvasManager.clear();
@@ -149,6 +152,7 @@ function Game(canvasManager)
                     }
                 }
             }
+            this.mapRedrawRequired = false;
             this.bgImageData = this.canvasManager.getImageData();
         }
         else
@@ -287,14 +291,19 @@ function Game(canvasManager)
     // MOUSE EVENT
     this.mouseDown = function(realX, realY)
     {
-        var cellPosition = getCellCoords(x, y);
+        var cellPosition = getCellCoords(realX, realY);
+        var realPosition = new Vector2((cellPosition.x * 50) + 5, (cellPosition.y * 50) + 5);
+        this.addTower("chinoky", realPosition);
         //this.map.setLogicCell(celdaX, celdaY, 1);
         //this.towers.push(this.towerFactory.getTower("chinoky", x, y));
+        // alert("hola " + cellPosition.x);
     }
     this.mouseUp = function(realX, realY)
     {
+        var cellPosition = getCellCoords(realX, realY);
     }
     this.mouseOver = function(realX, realY)
     {
+        var cellPosition = getCellCoords(realX, realY);
     }
 }
