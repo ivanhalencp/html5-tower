@@ -9,11 +9,11 @@ function ResourceManager()
     {
         this.addImage("grass", relPath + "img/grass_2.png");
         this.addImage("road", relPath + "img/road_1.png");
-        this.addImage("towerBase", relPath + "img/grassBaseTower_2.png");
+        this.addImage("towerBase", relPath + "img/baseTower_3.png");
         this.addImage("crosshair", relPath + "img/crosshair_2.png");
         this.addImage("alien_1", relPath + "img/alien_2.png");
         this.addImage("alien_2", relPath + "img/alien_3.png");
-        this.addImage("tower", relPath + "img/turret_2.png");
+        this.addImage("tower", relPath + "img/turret_3.png");
         this.loadImages(canvasManager);
     }
     // [CREATE / ADD / ASSOCIATE] IMAGES DEFINITIONS
