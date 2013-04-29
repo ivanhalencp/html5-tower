@@ -13,6 +13,7 @@ function Bullet(id, type, speed, damage, damageRange)
     this.damageRange = damageRange;
     this.enemyTarget = null;
     this.targetPosition = null;
+    this.targetAlive = true;
     this.distance = 0;
     this.v2Speed = null;
     this.active = true;
@@ -42,7 +43,7 @@ function Bullet(id, type, speed, damage, damageRange)
             {
                 if (distance(this.realPosition, this.enemyTarget.realPosition) <= this.damageRange)
                 {
-                    this.enemyTarget.onDamage(this.damage);
+                    this.targetAlive = this.enemyTarget.onDamage(this.damage);
                     //divDebug("impact...");
                 }
                 //else
