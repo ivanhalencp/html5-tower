@@ -25,6 +25,7 @@ function Game(canvasManager)
     this.bgImageData = null;
     this.drawMapMode = "bitmap"; // bitmap, redraw
     this.mapRedrawRequired = false;
+    this.selectorPosition = new Vector2(0, 0);
     // INIT ALL
     this.init = function()
     {
@@ -122,7 +123,14 @@ function Game(canvasManager)
         {
             bullet = this.bullets[bulletIndex];
             if (bullet.active)
+            {
                 bullet.doAction();
+                if (!bullet.targetAlive)
+                {
+                    // ENEMY KILLED
+                    this.money += bullet.enemyTarget.moneyReward;
+                }
+            }
         }
     }
     // ********
@@ -216,8 +224,11 @@ function Game(canvasManager)
             if (currentBullet.active)
                 this.canvasManager.drawCircle(currentBullet.realPosition.x, currentBullet.realPosition.y, 2, "blue", "#CCCCCC");
         }
+        // MOUSE SELECTOR
+        this.canvasManager.drawRectangle(this.selectorPosition.x, this.selectorPosition.y, 50, 50, "red");
         // TEXTS
-        this.canvasManager.drawText(" $" + this.money + " action:" + this.gameTimer.toString(), 8, 18, "12pt Arial", "yellow");
+        // this.canvasManager.drawText(" $" + this.money + " action:" + this.gameTimer.toString(), 8, 18, "12pt Arial", "yellow");
+        this.canvasManager.drawText(" $" + this.money, 8, 28, "12pt Arial", "yellow");
     }
     // ANIMATE ALL ENTITIES
     this.animateAll = function()
@@ -302,8 +313,9 @@ function Game(canvasManager)
     {
         var cellPosition = getCellCoords(realX, realY);
     }
-    this.mouseOver = function(realX, realY)
+    this.mouseMove = function(realX, realY)
     {
         var cellPosition = getCellCoords(realX, realY);
+        this.selectorPosition = new Vector2(cellPosition.x * 50, cellPosition.y * 50);
     }
 }
