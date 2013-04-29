@@ -34,7 +34,7 @@ function divDebug(str)
     document.getElementById("debugWindow").innerHTML = str;
 }
 // EVENTS
-function mouseDownHandler(ev)
+function getMousePosition(ev)
 {
     var x, y;
     // Get the mouse position relative to the canvas element.
@@ -55,5 +55,16 @@ function mouseDownHandler(ev)
         if (this.offsetTop)
             y = y - this.offsetTop;
     }
-    juego.mouseDown(x, y);
+    return new Vector2(x, y);
+}
+function mouseDownHandler(ev)
+{
+    var mousePosition = getMousePosition(ev);
+    juego.mouseDown(mousePosition.x, mousePosition.y);    
+}
+function mouseMoveHandler(ev)
+{
+    var mousePosition = getMousePosition(ev);
+    juego.mouseMove(mousePosition.x, mousePosition.y);
+    //$content($("debugWindow"), "x: " + mousePosition.x);
 }
