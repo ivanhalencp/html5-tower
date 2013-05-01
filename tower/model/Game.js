@@ -20,6 +20,7 @@ function Game(canvasManager)
     this.currentLevel = null;
     this.money = 0;
     this.score = 0;
+    this.baseEnergy = 100;
     this.gameTimer = 0;
     this.interval = null;
     this.bgImageData = null;
@@ -100,11 +101,18 @@ function Game(canvasManager)
     {
         this.gameTimer++;
         var enemiesInAction = new Array();
+        var damage = 0;
         // HORDES / ENEMIES ACTION
         for (var hordeIndex = 0; hordeIndex < this.currentLevel.hordes.length; hordeIndex++)
         {
-            this.currentLevel.hordes[hordeIndex].doAction(this.gameTimer);
+            damage += this.currentLevel.hordes[hordeIndex].doAction(this.gameTimer);
             enemiesInAction = enemiesInAction.concat(this.currentLevel.hordes[hordeIndex].enemiesInAction);
+        }
+        // BASE DAMAGE
+        this.baseEnergy -= damage;
+        if (this.baseEnergy <= 0)
+        {
+            this.state = "gameover";
         }
         // TOWERS ACTION
         var shot = null;
@@ -203,7 +211,8 @@ function Game(canvasManager)
                         enemyEnergyBarColor = "yellow";
                     else
                         enemyEnergyBarColor = "red";
-                    this.canvasManager.drawRectangle(currentEnemy.realPosition.x - 12.5, currentEnemy.realPosition.y - 15, currentEnemy.energy / 4, 2, "white", enemyEnergyBarColor);
+                    //this.canvasManager.drawRectangle(currentEnemy.realPosition.x - 12.5, currentEnemy.realPosition.y - 15, currentEnemy.energy / 4, 2, "white", enemyEnergyBarColor);
+                    this.canvasManager.drawEnergyBar("h", currentEnemy.realPosition.x - 12.5, currentEnemy.realPosition.y - 15, currentEnemy.energy / 4, 2, "white", enemyEnergyBarColor);
                 }
             }
         }
@@ -215,7 +224,7 @@ function Game(canvasManager)
             //this.canvasManager.drawSprite(this.resourceManager.towerImage, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1);
             this.canvasManager.drawSprite(animation.imageSrc, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1, animation.frameRect);
             // DRAW ATTACK RANGE
-            //this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
+            // this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
         }
         // BULLETS
         for (var bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++)
@@ -226,9 +235,14 @@ function Game(canvasManager)
         }
         // MOUSE SELECTOR
         this.canvasManager.drawRectangle(this.selectorPosition.x, this.selectorPosition.y, 50, 50, "red");
-        // TEXTS
-        // this.canvasManager.drawText(" $" + this.money + " action:" + this.gameTimer.toString(), 8, 18, "12pt Arial", "yellow");
-        this.canvasManager.drawText(" $" + this.money, 8, 28, "12pt Arial", "yellow");
+        // INFO BOX
+        // BOX
+        this.canvasManager.drawImage(this.resourceManager.getImage('moneyBox'), 645, 5);
+        // BASE ENERGY
+        this.canvasManager.drawEnergyBar("v", 768, 18, this.baseEnergy / 4, 4, "red", "red");
+        this.canvasManager.drawEnergyBar("v", 768, 18, 25, 4, "white");
+        // MONEY
+        this.canvasManager.drawText(this.money, 688, 36, "10pt Arial", "yellow");
     }
     // ANIMATE ALL ENTITIES
     this.animateAll = function()
@@ -291,6 +305,8 @@ function Game(canvasManager)
                 this.drawAll();
                 this.animateAll();
                 this.deadBodiesCollect();
+                break;
+            case "gameover":
                 break;
         }
     }

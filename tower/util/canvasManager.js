@@ -85,6 +85,22 @@ function CanvasManager(canvasId)
         this.context.drawImage(image, section.x, section.y, section.width, section.height, -section.width/2, -section.height/2, section.width, section.height);
         this.context.restore();
     }
+    this.drawEnergyBar = function(direction, x, y, energy, rectWidth, borderColor, energyColor)
+    {
+        var width, height;
+        if (direction == "h")
+        {
+            width = energy;
+            height = rectWidth;
+        }
+        else
+        {
+            width = rectWidth;
+            height = energy;
+        }
+        this.drawRectangle(x, y, width, height, borderColor, energyColor);
+        //this.drawRectangle(currentEnemy.realPosition.x - 12.5, currentEnemy.realPosition.y - 15, currentEnemy.energy / 4, 2, "white", enemyEnergyBarColor);
+    }
     // SAVE IMA
     this.getImageData = function(section)
     {

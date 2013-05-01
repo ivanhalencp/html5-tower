@@ -69,6 +69,20 @@ function Level(name, initialMoney)
                 }
             }
         }
+        this.readJSON = function(JSONData)
+        {
+            var exampleMap = {
+                levelName:"jsonTest",
+                initialMoney:1500,
+                hordes:[
+                    {actionTime:"", actionDelay:0, pathIndex:0},
+                    {actionTime:"", actionDelay:0, pathIndex:0}
+                ],
+                paths:[
+                    {}
+                ]
+            };
+        }
         // FIX CORNERS - ASSIGN A SPECIFIC TYPE FOR VISUALLY REPRESENTING THE CORNERS
         /*for (var pathPointIndex = 0; pathPointIndex < allPathPoints.length; pathPointIndex++)
         {
