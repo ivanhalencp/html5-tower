@@ -85,6 +85,23 @@ function CanvasManager(canvasId)
         this.context.drawImage(image, section.x, section.y, section.width, section.height, -section.width/2, -section.height/2, section.width, section.height);
         this.context.restore();
     }
+    this.drawEnergyBar = function(direction, x, y, energy, rectWidth, borderColor, energyColor, sense)
+    {
+        var width, height;
+        if (!isset(sense))
+            sense = 1;
+        if (direction == "h")
+        {
+            width = energy * sense;
+            height = rectWidth;
+        }
+        else
+        {
+            width = rectWidth;
+            height = energy * sense;
+        }
+        this.drawRectangle(x, y, width, height, borderColor, energyColor);
+    }
     // SAVE IMA
     this.getImageData = function(section)
     {

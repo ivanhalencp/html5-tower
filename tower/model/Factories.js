@@ -27,10 +27,10 @@ function EnemyFactory()
         switch (type)
         {
             case "malito":
-                enemy = new Enemy(enemyOuid++, type, 3, .7, 1, 15, 15);
+                enemy = new Enemy(enemyOuid++, type, 3, .7, 10, 15, 15);
                 break;
             case "maluko":
-                enemy = new Enemy(enemyOuid++, type, 7, 1, 2, 20, 20);
+                enemy = new Enemy(enemyOuid++, type, 7, 1, 25, 20, 20);
                 break;
         }
         return enemy;

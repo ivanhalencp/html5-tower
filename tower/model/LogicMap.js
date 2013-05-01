@@ -4,6 +4,7 @@ function LogicMap(width, height)
     this.width = width;
     this.height = height;
     this.map = [];
+    this.terrainType = 1;
     // INITIALIZE MAP
     this.init = function()
     {

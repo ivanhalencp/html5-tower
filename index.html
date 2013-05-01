@@ -11,6 +11,7 @@
         var juego = null;
         function init()
         {            
+            gameCanvas = $("mainCanvas");
             canvasManager = new CanvasManager("mainCanvas");
             juego = new Game(canvasManager);
             juego.start();
