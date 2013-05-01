@@ -1,4 +1,5 @@
 var relPath = "tower/";
+var gameCanvas;
 
 $include(relPath + "model/Animation.js");
 $include(relPath + "model/AnimationManager.js");
@@ -50,21 +51,23 @@ function getMousePosition(ev)
         x = ev.layerX;
         y = ev.layerY;
         // OFFSET DEL CANVAS
-        if (this.offsetLeft)
-            x = x - this.offsetLeft;
-        if (this.offsetTop)
-            y = y - this.offsetTop;
+        if (gameCanvas.offsetLeft)
+            x = x - gameCanvas.offsetLeft;
+        if (gameCanvas.offsetTop)
+            y = y - gameCanvas.offsetTop;
     }
     return new Vector2(x, y);
 }
 function mouseDownHandler(ev)
 {
     var mousePosition = getMousePosition(ev);
+    //divDebug("[x: " + mousePosition.x + ", y: " + mousePosition.y + "]");
     juego.mouseDown(mousePosition.x, mousePosition.y);    
 }
 function mouseMoveHandler(ev)
 {
     var mousePosition = getMousePosition(ev);
+    //divDebug("x: " + mousePosition.x + ", y: " + mousePosition.y);
     juego.mouseMove(mousePosition.x, mousePosition.y);
     //$content($("debugWindow"), "x: " + mousePosition.x);
 }
