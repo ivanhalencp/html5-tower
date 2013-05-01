@@ -42,7 +42,7 @@ function Game(canvasManager)
             //errLoop++;
         }
         // TEST LEVEL
-        this.currentLevel = new Level("test", 1500);
+        this.currentLevel = new Level("test", 150);
         this.money = this.currentLevel.initialMoney;
         // PATH DE PRUEBA
         var path = new Path();
@@ -239,8 +239,8 @@ function Game(canvasManager)
         // BOX
         this.canvasManager.drawImage(this.resourceManager.getImage('moneyBox'), 645, 5);
         // BASE ENERGY
-        this.canvasManager.drawEnergyBar("v", 768, 18, this.baseEnergy / 4, 4, "red", "red");
-        this.canvasManager.drawEnergyBar("v", 768, 18, 25, 4, "white");
+        this.canvasManager.drawEnergyBar("v", 768, 42, this.baseEnergy / 4, 4, "red", "red", -1);
+        this.canvasManager.drawEnergyBar("v", 768, 42, 25, 4, "white", undefined, -1);
         // MONEY
         this.canvasManager.drawText(this.money, 688, 36, "10pt Arial", "yellow");
     }
