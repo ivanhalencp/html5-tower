@@ -144,6 +144,11 @@ function Vector2(x, y)
 {
     this.x = x;
     this.y = y;
+    this.set = function(x, y)
+    {
+        this.x = x;
+        this.y = y;
+    }
     this.add = function(vector)
     {
         this.x += vector.x;

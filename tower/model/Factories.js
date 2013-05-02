@@ -46,7 +46,7 @@ function TowerFactory()
         switch (type)
         {
             case "chinoky":
-                tower = new Tower(towerOuid++, type, 70, 2, 1, 20);
+                tower = new Tower(towerOuid++, type, 70, 2, 1, 20, 50);
                 break;
         }
         if (tower != null && isset(cellPosition))

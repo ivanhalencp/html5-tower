@@ -19,6 +19,7 @@ function Game(canvasManager)
     // REPRESENT THE CURRENT LEVEL WHERE IS PLAYING
     this.currentLevel = null;
     this.money = 0;
+    this.visualMoney = 0;
     this.score = 0;
     this.baseEnergy = 100;
     this.gameTimer = 0;
@@ -27,6 +28,7 @@ function Game(canvasManager)
     this.drawMapMode = "bitmap"; // bitmap, redraw
     this.mapRedrawRequired = false;
     this.selectorPosition = new Vector2(0, 0);
+    this.mouseRealPosition = new Vector2(0, 0);
     // INIT ALL
     this.init = function()
     {
@@ -44,6 +46,7 @@ function Game(canvasManager)
         // TEST LEVEL
         this.currentLevel = new Level("test", 150);
         this.money = this.currentLevel.initialMoney;
+        this.visualMoney = this.money;
         // PATH DE PRUEBA
         var path = new Path();
         path.addPoint(-1, 8);
@@ -87,9 +90,13 @@ function Game(canvasManager)
         if (this.currentLevel.map.getLogicCell(cellPosition.x, cellPosition.y) == 0)
         {
             var tower = this.towerFactory.buildTower(type, cellPosition);
-            this.currentLevel.map.setLogicCell(cellPosition.x, cellPosition.y, 2);
-            this.towers.push(tower);
-            towerAdded = true;
+            if (tower.cost <= this.money)
+            {
+                this.currentLevel.map.setLogicCell(cellPosition.x, cellPosition.y, 2);
+                this.towers.push(tower);
+                this.money -= tower.cost;
+                towerAdded = true;
+            }
         }
         this.mapRedrawRequired = true;
         return towerAdded;
@@ -140,6 +147,12 @@ function Game(canvasManager)
                 }
             }
         }
+        // OTHERS
+        // MONEY VISUAL INCREMENT/DECREMENT EFFECT
+        if (this.visualMoney < this.money)
+            this.visualMoney++;
+        else if (this.visualMoney > this.money)
+            this.visualMoney--;
     }
     // ********
     // DRAW ALL
@@ -234,7 +247,7 @@ function Game(canvasManager)
                 this.canvasManager.drawCircle(currentBullet.realPosition.x, currentBullet.realPosition.y, 2, "blue", "#CCCCCC");
         }
         // MOUSE SELECTOR
-        this.canvasManager.drawRectangle(this.selectorPosition.x, this.selectorPosition.y, 50, 50, "red");
+        //this.canvasManager.drawRectangle(this.selectorPosition.x, this.selectorPosition.y, 50, 50, "red");
         // INFO BOX
         // BOX
         this.canvasManager.drawImage(this.resourceManager.getImage('moneyBox'), 645, 5);
@@ -242,7 +255,12 @@ function Game(canvasManager)
         this.canvasManager.drawEnergyBar("v", 768, 42, this.baseEnergy / 4, 4, "red", "red", -1);
         this.canvasManager.drawEnergyBar("v", 768, 42, 25, 4, "white", undefined, -1);
         // MONEY
-        this.canvasManager.drawText(this.money, 688, 36, "10pt Arial", "yellow");
+        this.canvasManager.drawText(this.visualMoney, 688, 36, "10pt Arial", "yellow");
+        // GAME OVER
+        if (this.state == "gameover")
+            this.canvasManager.drawImage(this.resourceManager.getImage('gameOver'), 250, 250);
+        // MOUSE CROSSHAIR
+        this.canvasManager.drawImage(this.resourceManager.getImage('mouseCrosshair'), this.mouseRealPosition.x - (23/2), this.mouseRealPosition.y - (23/2));
     }
     // ANIMATE ALL ENTITIES
     this.animateAll = function()
@@ -321,9 +339,6 @@ function Game(canvasManager)
         var cellPosition = getCellCoords(realX, realY);
         var realPosition = new Vector2((cellPosition.x * 50) + 5, (cellPosition.y * 50) + 5);
         this.addTower("chinoky", realPosition);
-        //this.map.setLogicCell(celdaX, celdaY, 1);
-        //this.towers.push(this.towerFactory.getTower("chinoky", x, y));
-        // alert("hola " + cellPosition.x);
     }
     this.mouseUp = function(realX, realY)
     {
@@ -331,6 +346,7 @@ function Game(canvasManager)
     }
     this.mouseMove = function(realX, realY)
     {
+        this.mouseRealPosition.set(realX, realY);
         var cellPosition = getCellCoords(realX, realY);
         this.selectorPosition = new Vector2(cellPosition.x * 50, cellPosition.y * 50);
     }

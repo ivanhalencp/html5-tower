@@ -1,11 +1,12 @@
 /*
  *   LEVEL
  */
-function Level(name, initialMoney)
+function Level(name, initialMoney, techLevel)
 {
     this.name = name;
-    this.map = new LogicMap(16, 12);
     this.initialMoney = initialMoney;
+    this.techLevel = techLevel;
+    this.map = new LogicMap(16, 12);
     this.paths = new Array();
     this.hordes = new Array();
     this.addPath = function(path)
@@ -69,20 +70,7 @@ function Level(name, initialMoney)
                 }
             }
         }
-        this.readJSON = function(JSONData)
-        {
-            var exampleMap = {
-                levelName:"jsonTest",
-                initialMoney:1500,
-                hordes:[
-                    {actionTime:"", actionDelay:0, pathIndex:0},
-                    {actionTime:"", actionDelay:0, pathIndex:0}
-                ],
-                paths:[
-                    {}
-                ]
-            };
-        }
+        
         // FIX CORNERS - ASSIGN A SPECIFIC TYPE FOR VISUALLY REPRESENTING THE CORNERS
         /*for (var pathPointIndex = 0; pathPointIndex < allPathPoints.length; pathPointIndex++)
         {
