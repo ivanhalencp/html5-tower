@@ -18,6 +18,11 @@ function AnimationManager(resourceManager)
                     // animation = new Animation(image, image.width / 2, image.height, 2, 15);
                     animation = new Animation(image, image.width, image.height, 1, 15);
                     break;
+                case "chinoky_2":
+                    image = this.resourceManager.getImage('tower');
+                    // animation = new Animation(image, image.width / 2, image.height, 2, 15);
+                    animation = new Animation(image, image.width, image.height, 1, 15);
+                    break;
             }
         }
         // ENIMIES

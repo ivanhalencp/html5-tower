@@ -118,6 +118,15 @@ function CanvasManager(canvasId)
             y = 0;
         this.context.putImageData(imageData, x, y);
     }
+    // OTHERS
+    this.hideMousePointer = function()
+    {
+        this.canvas.style.cursor = "none";
+    }
+    this.showMousePointer = function()
+    {
+        this.canvas.style.cursor  = "pointer";
+    }
 }
 // SIMPLE RECTANGLE IMPLEMENTATION
 function Rectangle(x, y, width, height)

@@ -16,6 +16,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost
     this.cost = cost;
     this.reloadTimer = 0;
     this.turretAngle = 0;
+    this.level = 1;
     this.setCellPosition = function(cellPosition)
     {
         this.cellPosition = cellPosition;

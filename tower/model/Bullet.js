@@ -30,7 +30,13 @@ function Bullet(id, type, speed, damage, damageRange)
         var targetDistance;
         switch (this.type)
         {
-            case "chinoky_bullet":
+            case "smallDamage":
+                this.realPosition.add(this.v2Speed);
+                targetDistance = distance(this.realPosition, this.targetPosition)
+                if (targetDistance < this.speed)
+                    impact = true;
+                break;
+            case "mediumDamage":
                 this.realPosition.add(this.v2Speed);
                 targetDistance = distance(this.realPosition, this.targetPosition)
                 if (targetDistance < this.speed)

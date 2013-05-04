@@ -6,10 +6,13 @@ function BulletFactory()
     {
         var tower = shot.tower;
         var bullet = null;
-        switch (tower.type)
+        switch (tower.bulletType)
         {
-            case "chinoky":
-                bullet = new Bullet(bulletOuid++, "chinoky_bullet", 6, 15, 15);
+            case "smallDamage":
+                bullet = new Bullet(bulletOuid++, tower.bulletType, 6, 15, 15);
+                break;
+             case "mediumDamage":
+                bullet = new Bullet(bulletOuid++, tower.bulletType, 6, 15, 30);
                 break;
         }
         if (bullet != null)
@@ -46,7 +49,10 @@ function TowerFactory()
         switch (type)
         {
             case "chinoky":
-                tower = new Tower(towerOuid++, type, 70, 2, 1, 20, 50);
+                tower = new Tower(towerOuid++, type, 70, 2, "smallDamage", 20, 50);
+                break;
+            case "chinoky_2":
+                tower = new Tower(towerOuid++, type, 210, 5, "mediumDamage", 10, 100);
                 break;
         }
         if (tower != null && isset(cellPosition))

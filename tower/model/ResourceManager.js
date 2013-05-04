@@ -17,6 +17,7 @@ function ResourceManager()
         this.addImage("tower", relPath + "img/turret_3.png");
         this.addImage("moneyBox", relPath + "img/moneyBox.png");
         this.addImage("gameOver", relPath + "img/gameOver_1.png");
+        this.addImage("optionBox", relPath + "img/optionBox.png");
         this.loadImages(canvasManager);
     }
     // [CREATE / ADD / ASSOCIATE] IMAGES DEFINITIONS

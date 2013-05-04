@@ -29,6 +29,9 @@ function Game(canvasManager)
     this.mapRedrawRequired = false;
     this.selectorPosition = new Vector2(0, 0);
     this.mouseRealPosition = new Vector2(0, 0);
+    this.optionBoxVisible = false;
+    this.optionBoxType = "new";
+    this.selectedCellPosition = new Vector2(0, 0);
     // INIT ALL
     this.init = function()
     {
@@ -237,7 +240,7 @@ function Game(canvasManager)
             //this.canvasManager.drawSprite(this.resourceManager.towerImage, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1);
             this.canvasManager.drawSprite(animation.imageSrc, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1, animation.frameRect);
             // DRAW ATTACK RANGE
-            // this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
+            this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
         }
         // BULLETS
         for (var bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++)
@@ -248,6 +251,7 @@ function Game(canvasManager)
         }
         // MOUSE SELECTOR
         //this.canvasManager.drawRectangle(this.selectorPosition.x, this.selectorPosition.y, 50, 50, "red");
+        //this.canvasManager.drawImage(this.resourceManager.getImage('optionBox'), this.selectorPosition.x - 50, this.selectorPosition.y - 50);
         // INFO BOX
         // BOX
         this.canvasManager.drawImage(this.resourceManager.getImage('moneyBox'), 645, 5);
@@ -256,6 +260,11 @@ function Game(canvasManager)
         this.canvasManager.drawEnergyBar("v", 768, 42, 25, 4, "white", undefined, -1);
         // MONEY
         this.canvasManager.drawText(this.visualMoney, 688, 36, "10pt Arial", "yellow");
+        // OPTION BOX
+        if (this.optionBoxVisible)
+        {
+            this.canvasManager.drawImage(this.resourceManager.getImage('optionBox'), (this.selectedCellPosition.x * 50) - 50, (this.selectedCellPosition.y * 50) - 50);
+        }
         // GAME OVER
         if (this.state == "gameover")
             this.canvasManager.drawImage(this.resourceManager.getImage('gameOver'), 250, 250);
@@ -316,6 +325,7 @@ function Game(canvasManager)
         {
             case "initializing":
                 this.init();
+                this.canvasManager.hideMousePointer();
                 break;
             case "playing":
                 this.doActions();
@@ -325,6 +335,7 @@ function Game(canvasManager)
                 this.deadBodiesCollect();
                 break;
             case "gameover":
+                this.canvasManager.showMousePointer();
                 break;
         }
     }
@@ -333,12 +344,48 @@ function Game(canvasManager)
     {
         this.interval = setInterval("juego.mainLoop()", 25);
     }
+    // MOUSE ACTIONS
+    this.mouseClickAction = function(cellPosition)
+    {
+        //var cellPosition = getCellCoords(realPosition.x, realPosition.y);
+        if (!this.optionBoxVisible)
+        {
+            var logicCell = this.currentLevel.map.getLogicCell(cellPosition.x, cellPosition.y);
+            if (logicCell == 0)
+            {
+                this.optionBoxType = "new";
+                this.selectedCellPosition = cellPosition;
+                this.optionBoxVisible = true;
+            }
+        }
+        else
+        {
+            var diffCellX = this.selectedCellPosition.x - cellPosition.x;
+            var diffCellY = this.selectedCellPosition.y - cellPosition.y;
+            var realPosition;
+            if (diffCellX == 1 && diffCellY == 1)
+            {
+                realPosition = new Vector2((this.selectedCellPosition.x * 50) + 5, (this.selectedCellPosition.y * 50) + 5);
+                this.addTower("chinoky", realPosition);
+                this.optionBoxVisible = false;
+            }
+            else if (diffCellX == 0 && diffCellY == 1)
+            {
+                realPosition = new Vector2((this.selectedCellPosition.x * 50) + 5, (this.selectedCellPosition.y * 50) + 5);
+                this.addTower("chinoky_2", realPosition);
+                this.optionBoxVisible = false;
+            }
+            else
+                this.optionBoxVisible = false;
+        }
+    }
     // MOUSE EVENT
     this.mouseDown = function(realX, realY)
     {
         var cellPosition = getCellCoords(realX, realY);
-        var realPosition = new Vector2((cellPosition.x * 50) + 5, (cellPosition.y * 50) + 5);
-        this.addTower("chinoky", realPosition);
+        //var realPosition = new Vector2((cellPosition.x * 50) + 5, (cellPosition.y * 50) + 5);
+        //this.addTower("chinoky_2", realPosition);
+        this.mouseClickAction(cellPosition);
     }
     this.mouseUp = function(realX, realY)
     {
