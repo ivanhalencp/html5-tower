@@ -39,9 +39,11 @@ function Game(canvasManager)
     {
         // LOAD IMAGE DATA
         this.resourceManager.init(this.canvasManager);
-        while (!this.resourceManager.allImagesLoaded())
+        var errLoop = 0;
+        while (!this.resourceManager.allImagesLoaded() && errLoop < 200)
         {
             // LOADING...
+            errLoop++;
         }
         // TEST LEVEL
         this.currentLevel = new Level("test", 150);
