@@ -235,7 +235,9 @@ function xAxisAngle(axisCenterPoint, point)
         var yDiff = point.y - axisCenterPoint.y
         var ady = Math.abs(xDiff);
         var op = Math.abs(yDiff);
-        if (ady != 0)
+        if (op == 0)
+            radAngle = Math.PI;
+        else if (ady != 0)
         {
             radAngle = Math.atan(op / ady);
             if (xDiff > 0 && yDiff < 0)
