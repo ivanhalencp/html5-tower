@@ -15,7 +15,7 @@ function Game(canvasManager)
     this.bullets = new Array();
     this.entities = new Array();
     // TO ADD A NEW TOWER
-    this.towerTypeSelected = null;
+    // this.towerTypeSelected = null;
     // REPRESENT THE CURRENT LEVEL WHERE IS PLAYING
     this.currentLevel = null;
     this.money = 0;
@@ -24,9 +24,11 @@ function Game(canvasManager)
     this.baseEnergy = 100;
     this.gameTimer = 0;
     this.interval = null;
+    // DRAW MAP MODES AND BACKGROUND IMAGE BUFFER
     this.bgImageData = null;
-    this.drawMapMode = "bitmap"; // bitmap, redraw
+    this.drawMapMode = "bitmap"; // (bitmap, redraw)
     this.mapRedrawRequired = false;
+    // MOUSE SELECTOR AND OPTION BOXES
     this.selectorPosition = new Vector2(0, 0);
     this.mouseRealPosition = new Vector2(0, 0);
     this.optionBoxVisible = false;
@@ -35,16 +37,11 @@ function Game(canvasManager)
     // INIT ALL
     this.init = function()
     {
-        // EVENTOS
-        //this.canvasManager.onMouseDown(mouseDownHandler);
         // LOAD IMAGE DATA
         this.resourceManager.init(this.canvasManager);
-        //alert ("arranco check...");
-        //var errLoop = 0;
-        while (!this.resourceManager.allImagesLoaded() && errLoop < 200)
+        while (!this.resourceManager.allImagesLoaded())
         {
             // LOADING...
-            //errLoop++;
         }
         // TEST LEVEL
         this.currentLevel = new Level("test", 150);

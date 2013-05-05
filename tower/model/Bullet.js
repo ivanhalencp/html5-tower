@@ -8,6 +8,7 @@ function Bullet(id, type, speed, damage, damageRange)
     this.superClass();
     this.id = id;
     this.type = type;
+    this.selectable = false;
     this.speed = speed;
     this.damage = damage;
     this.damageRange = damageRange;
@@ -17,12 +18,17 @@ function Bullet(id, type, speed, damage, damageRange)
     this.distance = 0;
     this.v2Speed = null;
     this.active = true;
-    this.init = function(initPosition, enemy, angle)
+    this.init = function(initPosition, enemy, angle, towerCannonLenght)
     {
         this.realPosition = initPosition;
         this.targetPosition = enemy.realPosition.copy();
         this.enemyTarget = enemy;
         this.v2Speed = getDirectionVector(this.speed, degToRad(angle) - (Math.PI / 2));
+        if (isset(towerCannonLenght))
+        {
+            var v2TowerCannonLenght = getDirectionVector(towerCannonLenght, degToRad(angle) - (Math.PI / 2));
+            this.realPosition.add(v2TowerCannonLenght);
+        }
     }
     this.doAction = function()
     {

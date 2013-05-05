@@ -1,13 +1,14 @@
 /*
  *  TOWER
  */
-function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost)
+function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost, cannonLenght)
 {
     // ENTITIES SUPERCLASS (GAMEENTITY)
     this.superClass = GameEntity;
     this.superClass();
     this.id = id;
     this.type = type;
+    this.selectable = true;
     this.cellPosition = new Vector2(0, 0);
     this.attackRange = attackRange;
     this.angularSpeed = angularSpeed;
@@ -17,6 +18,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost
     this.reloadTimer = 0;
     this.turretAngle = 0;
     this.level = 1;
+    this.cannonLenght = cannonLenght;
     this.setCellPosition = function(cellPosition)
     {
         this.cellPosition = cellPosition;
@@ -46,6 +48,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost
                 radAngle = yAxisAngle(this.realPosition, enemy.realPosition);
                 degAngle = Math.round(radToDeg(radAngle));
                 angleDiff = Math.abs(degAngle - this.turretAngle);
+                //divDebug("AngleDiff: " + radAngle);
                 // TRYING TO MAKE A MORE INTELLIGENT SENSE OF ROTATION
                 // [-- START --]
                 inverseAngleDiff = Math.abs(degAngle - (this.turretAngle + 360));

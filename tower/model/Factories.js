@@ -16,7 +16,7 @@ function BulletFactory()
                 break;
         }
         if (bullet != null)
-            bullet.init(tower.realPosition.copy(), shot.enemy, tower.turretAngle);
+            bullet.init(tower.realPosition.copy(), shot.enemy, tower.turretAngle, tower.cannonLenght);
         return bullet;
     }
 }
@@ -49,10 +49,10 @@ function TowerFactory()
         switch (type)
         {
             case "chinoky":
-                tower = new Tower(towerOuid++, type, 70, 2, "smallDamage", 20, 50);
+                tower = new Tower(towerOuid++, type, 70, 2, "smallDamage", 20, 50, 25);
                 break;
             case "chinoky_2":
-                tower = new Tower(towerOuid++, type, 210, 5, "mediumDamage", 10, 100);
+                tower = new Tower(towerOuid++, type, 210, 5, "mediumDamage", 10, 100, 25);
                 break;
         }
         if (tower != null && isset(cellPosition))
