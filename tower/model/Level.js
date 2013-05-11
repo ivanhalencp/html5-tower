@@ -12,11 +12,11 @@ function Level(name, initialMoney, techLevel)
     this.addPath = function(path)
     {
         this.paths.push(path);
-    }
+    };
     this.addHorde = function(horde)
     {
         this.hordes.push(horde);
-    }
+    };
     this.init = function()
     {
         this.map.init();
@@ -59,23 +59,22 @@ function Level(name, initialMoney, techLevel)
                         this.map.setLogicCell(pathDrawer.x, pathDrawer.y, 1);
                         allPathPoints.push(pathDrawer.x, pathDrawer.y);
                     }
-                    if (pathDirection == 6)
+                    if (pathDirection === 6)
                         pathDrawer.x++;
-                    else if (pathDirection == 4)
+                    else if (pathDirection === 4)
                         pathDrawer.x--;
-                    else if (pathDirection == 8)
+                    else if (pathDirection === 8)
                         pathDrawer.y--;
-                    else if (pathDirection == 2)
+                    else if (pathDirection === 2)
                         pathDrawer.y++;
                 }
             }
         }
-        
         // FIX CORNERS - ASSIGN A SPECIFIC TYPE FOR VISUALLY REPRESENTING THE CORNERS
         /*for (var pathPointIndex = 0; pathPointIndex < allPathPoints.length; pathPointIndex++)
         {
             // TODO : IMPLEMENT THIS !
             var pathPoint = allPathPoints[pathPointIndex];
         }*/
-    }
+    };
 }

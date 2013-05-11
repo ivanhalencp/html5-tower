@@ -2,12 +2,14 @@
   <head>
     <title></title>
     <meta charset="UTF-8">
-    <!--[if IE]><script src="tower/util/excanvas.js"></script><![endif]-->
-    <script type="text/javascript" language="javascript" src="tower/util/canvasManager.js"></script>
-    <script type="text/javascript" language="javascript" src="tower/util/jsMiniUtil.js"></script>
-    <script type="text/javascript" language="javascript" src="tower/modules/main.js"></script>
-    <script language="javascript" type="text/javascript">
+    <!--[if IE]><script src="tower/util/excanvas/excanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="tower/util/canvasManager.js"></script>
+    <script type="text/javascript" src="tower/util/audioManager.js"></script>
+    <script type="text/javascript" src="tower/util/jsMiniUtil.js"></script>
+    <script type="text/javascript" src="tower/modules/main.js"></script>
+    <script type="text/javascript">
         var canvasManager = null;
+        var audioManager = null;
         var juego = null;
         function init()
         {            
@@ -17,7 +19,18 @@
             juego.start();
             $("mainCanvas").onclick = mouseDownHandler;
             $("mainCanvas").onmousemove = mouseMoveHandler;
+            
+            // AUDIO TEST
+            /*audioManager = new AudioManager();
+            audioManager.init(5);            
+            audioManager.loadSounds(new Array('tower/sound/echo.mp3'), onLoadAudios);*/
+            
         }
+        /*function onLoadAudios()
+        {
+            alert("hoa");
+            audioManager.playSound(0);
+        }*/
     </script>
     <style type="text/css">
         body
@@ -28,7 +41,7 @@
         }
     </style>
   </head>
-  <body onload = "init()" bgcolor = "black">
+  <body onload = "init();" style="background-color: black;">
       <br />
       <br />
       <center>

@@ -6,19 +6,22 @@ function BulletFactory()
     {
         var tower = shot.tower;
         var bullet = null;
-        switch (tower.bulletType)
+        switch (shot.bulletType)
         {
             case "smallDamage":
-                bullet = new Bullet(bulletOuid++, tower.bulletType, 6, 15, 15);
+                bullet = new Bullet(bulletOuid++, shot.bulletType, 6, 15, 15);
                 break;
              case "mediumDamage":
-                bullet = new Bullet(bulletOuid++, tower.bulletType, 6, 15, 30);
+                bullet = new Bullet(bulletOuid++, shot.bulletType, 6, 15, 30);
+                break;
+             case "laser":
+                bullet = new Bullet(bulletOuid++, shot.bulletType, -1, 20, 5);
                 break;
         }
-        if (bullet != null)
+        if (bullet !== null)
             bullet.init(tower.realPosition.copy(), shot.enemy, tower.turretAngle, tower.cannonLenght);
         return bullet;
-    }
+    };
 }
 // USE IT TO CREATE AND GET A NEW ENEMY
 function EnemyFactory()
@@ -37,7 +40,7 @@ function EnemyFactory()
                 break;
         }
         return enemy;
-    }
+    };
 }
 // USE IT TO CREATE AND GET A NEW TOWER
 function TowerFactory()
@@ -54,9 +57,12 @@ function TowerFactory()
             case "chinoky_2":
                 tower = new Tower(towerOuid++, type, 210, 5, "mediumDamage", 10, 100, 25);
                 break;
+            case "tesla":
+                tower = new Tower(towerOuid++, type, 250, 90, "laser", 100, 100, 0);
+                break;
         }
-        if (tower != null && isset(cellPosition))
+        if (tower !== null && isset(cellPosition))
             tower.setCellPosition(cellPosition);
         return tower;
-    }
+    };
 }

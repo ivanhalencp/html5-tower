@@ -18,11 +18,10 @@ function Animation(imageSrc, frameWidth, frameHeight, framesCount, delay)
             {
                 this.frameIndex++;
                 this.delayTimer = 0;
-                if (this.frameIndex == this.framesCount)
+                if (this.frameIndex === this.framesCount)
                     this.frameIndex = 0;
             }
             this.frameRect.x = this.frameWidth * this.frameIndex;
         }
-    }
+    };
 }
-

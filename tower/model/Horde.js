@@ -27,14 +27,14 @@ function Horde(actionTime, actionDelay, path)
     this.addEnemy = function(type)
     {
         this.enemies.push(this.enemyFactory.getEnemy(type));
-    }
+    };
     this.addEnemies = function(type, count)
     {
         for (var n = 0; n < count; n++)
         {
             this.enemies.push(this.enemyFactory.getEnemy(type));
         }
-    }
+    };
     this.doAction = function(gameTimer)
     {
         var baseDamage = 0;
@@ -47,13 +47,13 @@ function Horde(actionTime, actionDelay, path)
             if (this.enemyActionIndex < this.enemies.length)
             {
                 this.enemyDelayIndex++;
-                if (this.enemyDelayIndex == this.actionDelay)
+                if (this.enemyDelayIndex === this.actionDelay)
                 {
                     enemy = this.enemies[this.enemyActionIndex];
                     enemy.realPosition = getRealCoords(path.points[0].x, path.points[0].y);
                     // QUADRANT ASSIGN
                     enemy.setRelativePosition(this.relativeQuadrantPositions[this.currentQuadrant++]);
-                    if (this.currentQuadrant == this.relativeQuadrantPositions.length)
+                    if (this.currentQuadrant === this.relativeQuadrantPositions.length)
                         this.currentQuadrant = 0;
                     enemy.inAction = true;
                     this.enemiesInAction.push(enemy);
@@ -79,5 +79,5 @@ function Horde(actionTime, actionDelay, path)
             //divDebug(this.enemies.length.toString() + " / " + this.enemiesInAction.length.toString());
         }
         return baseDamage;
-    }
+    };
 }

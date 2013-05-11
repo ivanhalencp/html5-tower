@@ -39,12 +39,11 @@ function Game(canvasManager)
     {
         // LOAD IMAGE DATA
         this.resourceManager.init(this.canvasManager);
-        var errLoop = 0;
-        while (!this.resourceManager.allImagesLoaded() && errLoop < 200)
+        while (!this.resourceManager.allImagesLoaded())
         {
             // LOADING...
-            errLoop++;
         }
+        //this.resourceManager.playSound("echo");
         // TEST LEVEL
         this.currentLevel = new Level("test", 150);
         this.money = this.currentLevel.initialMoney;
@@ -84,12 +83,12 @@ function Game(canvasManager)
         this.addTower("chinoky", new Vector2(455, 155));
         this.addTower("chinoky", new Vector2(455, 355)); */
         this.state = "playing";
-    }
+    };
     this.addTower = function(type, realPosition)
     {
         var cellPosition = getCellCoords(realPosition.x, realPosition.y);
         var towerAdded = false;
-        if (this.currentLevel.map.getLogicCell(cellPosition.x, cellPosition.y) == 0)
+        if (this.currentLevel.map.getLogicCell(cellPosition.x, cellPosition.y) === 0)
         {
             var tower = this.towerFactory.buildTower(type, cellPosition);
             if (tower.cost <= this.money)
@@ -102,7 +101,7 @@ function Game(canvasManager)
         }
         this.mapRedrawRequired = true;
         return towerAdded;
-    }
+    };
     // **********
     // DO ACTIONS
     // **********
@@ -129,7 +128,7 @@ function Game(canvasManager)
         for (var towerIndex = 0; towerIndex < this.towers.length; towerIndex++)
         {
             shot = this.towers[towerIndex].doAction(enemiesInAction);
-            if (shot != null)
+            if (shot !== null)
             {
                 bullet = this.bulletFactory.buildBullet(shot);
                 this.bullets.push(bullet);
@@ -155,14 +154,14 @@ function Game(canvasManager)
             this.visualMoney++;
         else if (this.visualMoney > this.money)
             this.visualMoney--;
-    }
+    };
     // ********
     // DRAW ALL
     // ********
     // DRAW MAP
     this.drawMap = function()
     {
-        if (this.bgImageData == null || this.drawMapMode == "redraw" || this.mapRedrawRequired)
+        if (this.bgImageData === null || this.drawMapMode === "redraw" || this.mapRedrawRequired)
         {
             // CLEAR CANVAS
             this.canvasManager.clear();
@@ -172,11 +171,11 @@ function Game(canvasManager)
                 for (var y = 0; y < this.currentLevel.map.height; y++)
                 {
                     typeId = this.currentLevel.map.getLogicCell(x, y);
-                    if (typeId == 0)
+                    if (typeId === 0)
                         this.canvasManager.drawImage(this.resourceManager.getImage('grass'), x * 50, y * 50);
-                    else if (typeId == 1)
+                    else if (typeId === 1)
                         this.canvasManager.drawImage(this.resourceManager.getImage('road'), x * 50, y * 50);
-                    else if (typeId == 2)
+                    else if (typeId === 2)
                     {
                         this.canvasManager.drawImage(this.resourceManager.getImage('grass'), x * 50, y * 50);
                         this.canvasManager.drawImage(this.resourceManager.getImage('towerBase'), x * 50, y * 50);
@@ -188,7 +187,7 @@ function Game(canvasManager)
         }
         else
             this.canvasManager.putImageData(this.bgImageData);
-    }
+    };
     // DRAW ALL ENTITIES (ENEMIES / TOWERS / BULLETS)
     this.drawAll = function()
     {
@@ -246,7 +245,12 @@ function Game(canvasManager)
         {
             currentBullet = this.bullets[bulletIndex];
             if (currentBullet.active)
-                this.canvasManager.drawCircle(currentBullet.realPosition.x, currentBullet.realPosition.y, 2, "blue", "#CCCCCC");
+            {    
+                if (currentBullet.type === "smallDamage" || currentBullet.type === "mediumDamage")
+                    this.canvasManager.drawCircle(currentBullet.realPosition.x, currentBullet.realPosition.y, 2, "blue", "#CCCCCC");
+                //else if (currentBullet.type === "laser")
+                    //this.canvasManager  drawCircle(currentBullet.realPosition.x, currentBullet.realPosition.y, 2, "blue", "#CCCCCC");                
+            }
         }
         // MOUSE SELECTOR
         //this.canvasManager.drawRectangle(this.selectorPosition.x, this.selectorPosition.y, 50, 50, "red");
@@ -265,16 +269,16 @@ function Game(canvasManager)
             this.canvasManager.drawImage(this.resourceManager.getImage('optionBox'), (this.selectedCellPosition.x * 50) - 50, (this.selectedCellPosition.y * 50) - 50);
         }
         // GAME OVER
-        if (this.state == "gameover")
+        if (this.state === "gameover")
             this.canvasManager.drawImage(this.resourceManager.getImage('gameOver'), 250, 250);
         // MOUSE CROSSHAIR
         this.canvasManager.drawImage(this.resourceManager.getImage('mouseCrosshair'), this.mouseRealPosition.x - (23/2), this.mouseRealPosition.y - (23/2));
-    }
+    };
     // ANIMATE ALL ENTITIES
     this.animateAll = function()
     {
         this.animationManager.doAnimations();
-    }
+    };
     // DESTROY INACTIVE ENEMIES, HORDES AND BULLETS
     this.deadBodiesCollect = function()
     {
@@ -316,15 +320,19 @@ function Game(canvasManager)
             else
                 this.bullets.splice(bulletIndex, 1);
         }
-    }
+    };
     // SIMPLE GAME LOOP
     this.mainLoop = function ()
     {
         switch (this.state)
         {
             case "initializing":
+                // LOAD ALL RESOURCES AND CREATE LEVEL 
                 this.init();
+                // HIDE STANDARD MOUSE POINTER
                 this.canvasManager.hideMousePointer();
+                // WAIT A SECOND (IMG COMPLETE BUG) AND START PLAYING MAIN LOOP
+                setTimeout("juego.initializePlayingMainLoop()", 1000);
                 break;
             case "playing":
                 this.doActions();
@@ -337,20 +345,25 @@ function Game(canvasManager)
                 this.canvasManager.showMousePointer();
                 break;
         }
-    }
+    };
     // START GAME
     this.start = function()
     {
+        divDebug("Initializing...");
+        this.mainLoop();
+    };
+    this.initializePlayingMainLoop = function()
+    {
+        divDebug("Playing...");
         this.interval = setInterval("juego.mainLoop()", 25);
-    }
+    };
     // MOUSE ACTIONS
     this.mouseClickAction = function(cellPosition)
     {
-        //var cellPosition = getCellCoords(realPosition.x, realPosition.y);
         if (!this.optionBoxVisible)
         {
             var logicCell = this.currentLevel.map.getLogicCell(cellPosition.x, cellPosition.y);
-            if (logicCell == 0)
+            if (logicCell === 0)
             {
                 this.optionBoxType = "new";
                 this.selectedCellPosition = cellPosition;
@@ -362,13 +375,13 @@ function Game(canvasManager)
             var diffCellX = this.selectedCellPosition.x - cellPosition.x;
             var diffCellY = this.selectedCellPosition.y - cellPosition.y;
             var realPosition;
-            if (diffCellX == 1 && diffCellY == 1)
+            if (diffCellX === 1 && diffCellY === 1)
             {
                 realPosition = new Vector2((this.selectedCellPosition.x * 50) + 5, (this.selectedCellPosition.y * 50) + 5);
                 this.addTower("chinoky", realPosition);
                 this.optionBoxVisible = false;
             }
-            else if (diffCellX == 0 && diffCellY == 1)
+            else if (diffCellX === 0 && diffCellY === 1)
             {
                 realPosition = new Vector2((this.selectedCellPosition.x * 50) + 5, (this.selectedCellPosition.y * 50) + 5);
                 this.addTower("chinoky_2", realPosition);
@@ -377,7 +390,7 @@ function Game(canvasManager)
             else
                 this.optionBoxVisible = false;
         }
-    }
+    };
     // MOUSE EVENT
     this.mouseDown = function(realX, realY)
     {
@@ -385,15 +398,15 @@ function Game(canvasManager)
         //var realPosition = new Vector2((cellPosition.x * 50) + 5, (cellPosition.y * 50) + 5);
         //this.addTower("chinoky_2", realPosition);
         this.mouseClickAction(cellPosition);
-    }
+    };
     this.mouseUp = function(realX, realY)
     {
         var cellPosition = getCellCoords(realX, realY);
-    }
+    };
     this.mouseMove = function(realX, realY)
     {
         this.mouseRealPosition.set(realX, realY);
         var cellPosition = getCellCoords(realX, realY);
         this.selectorPosition = new Vector2(cellPosition.x * 50, cellPosition.y * 50);
-    }
+    };
 }

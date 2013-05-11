@@ -23,7 +23,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost
     {
         this.cellPosition = cellPosition;
         this.realPosition = getRealCoords(cellPosition.x, cellPosition.y);
-    }
+    };
     this.doAction = function(enemies)
     {
         var enemy = null;
@@ -77,13 +77,13 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost
                         this.turretAngle -= angleDiff;
                 }
                 // TARGET IN CROSSHAIRS
-                if (this.turretAngle == degAngle)
+                if (this.turretAngle === degAngle)
                 {
                     // MARK ENEMY AS TARGETED
                     enemy.targeted = true;
-                    if (this.reloadTimer == this.reloadTime)
+                    if (this.reloadTimer === this.reloadTime)
                     {
-                        shot = new Shot(this, enemy);
+                        shot = new Shot(this, enemy, this.bulletType);
                         // RESET RELOAD TIMER
                         this.reloadTimer = 0;
                     }
@@ -93,5 +93,5 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost
                 enemyIndex++;
         }
         return shot;
-    }
+    };
 }

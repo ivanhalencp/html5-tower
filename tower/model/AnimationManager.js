@@ -48,27 +48,27 @@ function AnimationManager(resourceManager)
         // ADD ANIMATION
         this.animations.push(animation);
         entity.animationIndex = this.animationCounter++;
-    }
+    };
     // GET ENTITY ANIMATION
     this.getAnimation = function(entity)
     {
-        if (entity.animationIndex == -1)
+        if (entity.animationIndex === -1)
             this.initAnimation(entity);
         return this.animations[entity.animationIndex];
-    }
+    };
     this.getImage = function(entity)
     {
         return this.animations[entity.animationIndex].imageSrc;
-    }
+    };
     this.getFrameRect = function(entity)
     {
         return this.animations[entity.animationIndex].frameRect;
-    }
+    };
     this.doAnimations = function()
     {
         for (var itAnimation = 0; itAnimation < this.animations.length; itAnimation++)
         {
             this.animations[itAnimation].doAnimation();
         }
-    }
+    };
 }
