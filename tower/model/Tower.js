@@ -19,6 +19,16 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost
     this.turretAngle = 0;
     this.level = 1;
     this.cannonLenght = cannonLenght;
+    this.jsonInit = function(jsonData)
+    {
+        var jsonObject = jsonEval(jsonData);
+        this.id = jsonObject.id;
+        this.type = jsonObject.type;
+        /* this.attackRange = jsonObject.attackRange;
+        this.angularSpeed = jsonObject.angularSpeed;
+        this.bulletType = jsonObject.bulletType;
+        this.reloadTime = jsonObject.reloadTime; */
+    };
     this.setCellPosition = function(cellPosition)
     {
         this.cellPosition = cellPosition;

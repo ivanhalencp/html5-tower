@@ -248,8 +248,8 @@ function Game(canvasManager)
             {    
                 if (currentBullet.type === "smallDamage" || currentBullet.type === "mediumDamage")
                     this.canvasManager.drawCircle(currentBullet.realPosition.x, currentBullet.realPosition.y, 2, "blue", "#CCCCCC");
-                //else if (currentBullet.type === "laser")
-                    //this.canvasManager  drawCircle(currentBullet.realPosition.x, currentBullet.realPosition.y, 2, "blue", "#CCCCCC");                
+                else if (currentBullet.type === "laser")
+                    this.canvasManager.drawLine(currentBullet.realPosition.x, currentBullet.realPosition.y, currentBullet.enemyTarget.realPosition.x, currentBullet.enemyTarget.realPosition.y, "red");
             }
         }
         // MOUSE SELECTOR
@@ -335,11 +335,14 @@ function Game(canvasManager)
                 setTimeout("juego.initializePlayingMainLoop()", 1000);
                 break;
             case "playing":
+                this.state = "working";
                 this.doActions();
                 this.drawMap();
                 this.drawAll();
                 this.animateAll();
                 this.deadBodiesCollect();
+                if (this.state !== "gameover")
+                    this.state = "playing";
                 break;
             case "gameover":
                 this.canvasManager.showMousePointer();
@@ -385,6 +388,12 @@ function Game(canvasManager)
             {
                 realPosition = new Vector2((this.selectedCellPosition.x * 50) + 5, (this.selectedCellPosition.y * 50) + 5);
                 this.addTower("chinoky_2", realPosition);
+                this.optionBoxVisible = false;
+            }
+            else if (diffCellX === -1 && diffCellY === 1)
+            {
+                realPosition = new Vector2((this.selectedCellPosition.x * 50) + 5, (this.selectedCellPosition.y * 50) + 5);
+                this.addTower("tesla", realPosition);
                 this.optionBoxVisible = false;
             }
             else

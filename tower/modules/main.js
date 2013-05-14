@@ -71,3 +71,7 @@ function mouseMoveHandler(ev)
     juego.mouseMove(mousePosition.x, mousePosition.y);
     //$content($("debugWindow"), "x: " + mousePosition.x);
 }
+function jsonEval(jsonData)
+{
+    return eval('(' + jsonData + ')');
+}

@@ -15,7 +15,7 @@ function BulletFactory()
                 bullet = new Bullet(bulletOuid++, shot.bulletType, 6, 15, 30);
                 break;
              case "laser":
-                bullet = new Bullet(bulletOuid++, shot.bulletType, -1, 20, 5);
+                bullet = new Bullet(bulletOuid++, shot.bulletType, -1, 50, 5);
                 break;
         }
         if (bullet !== null)
@@ -53,12 +53,29 @@ function TowerFactory()
         {
             case "chinoky":
                 tower = new Tower(towerOuid++, type, 70, 2, "smallDamage", 20, 50, 25);
+                /* IDEA OF JSON INIT 
+                tower.jsonInit(
+                    {
+                        id: towerOuid++,
+                        type: type,
+                        cannonLenght: 25,
+                        levels: 
+                        [
+                            // LEVEL 1
+                            {attackRange: 70, angularSpeed: 2, bulletType: "smallDamage", reloadTime: 20, cost: 50},
+                            // LEVEL 2
+                            {attackRange: 70, angularSpeed: 2, bulletType: "smallDamage", reloadTime: 20, cost: 50}, 
+                            // LEVEL 3
+                            {attackRange: 70, angularSpeed: 2, bulletType: "mediumDamage", reloadTime: 20, cost: 50}
+                        ]
+                    }
+                ); */              
                 break;
             case "chinoky_2":
                 tower = new Tower(towerOuid++, type, 210, 5, "mediumDamage", 10, 100, 25);
                 break;
             case "tesla":
-                tower = new Tower(towerOuid++, type, 250, 90, "laser", 100, 100, 0);
+                tower = new Tower(towerOuid++, type, 250, 90, "laser", 60, 150, 0);
                 break;
         }
         if (tower !== null && isset(cellPosition))

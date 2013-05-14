@@ -27,8 +27,10 @@ function CanvasManager(canvasId)
         this.context.save();
         this.context.strokeStyle = lineColor;  
         this.context.beginPath();
-        // TODO...
+        this.context.moveTo(x1, y1);
+        this.context.lineTo(x2, y2);
         this.context.closePath();
+        this.context.stroke();
         this.context.restore();
     };
     // DRAW / FILL RECTANGLE

@@ -22,6 +22,7 @@ function ResourceManager()
         this.addImage("alien_1", relPath + "img/alien_2.png");
         this.addImage("alien_2", relPath + "img/alien_3.png");
         this.addImage("tower", relPath + "img/turret_3.png");
+        this.addImage("laserTower", relPath + "img/laserTurret_1.png");
         this.addImage("moneyBox", relPath + "img/moneyBox.png");
         this.addImage("gameOver", relPath + "img/gameOver_1.png");
         this.addImage("optionBox", relPath + "img/optionBox.png");

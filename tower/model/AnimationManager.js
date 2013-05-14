@@ -23,6 +23,11 @@ function AnimationManager(resourceManager)
                     // animation = new Animation(image, image.width / 2, image.height, 2, 15);
                     animation = new Animation(image, image.width, image.height, 1, 15);
                     break;
+                case "tesla":
+                    image = this.resourceManager.getImage('laserTower');
+                    // animation = new Animation(image, image.width / 2, image.height, 2, 15);
+                    animation = new Animation(image, image.width, image.height, 1, 15);
+                    break;
             }
         }
         // ENIMIES
