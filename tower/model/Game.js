@@ -15,35 +15,41 @@ function Game(canvasManager)
     this.bullets = new Array();
     this.entities = new Array();
     // TO ADD A NEW TOWER
-    this.towerTypeSelected = null;
+    // this.towerTypeSelected = null;
     // REPRESENT THE CURRENT LEVEL WHERE IS PLAYING
     this.currentLevel = null;
     this.money = 0;
+    this.visualMoney = 0;
     this.score = 0;
     this.baseEnergy = 100;
+    this.baseRealPosition = new Vector2(0, 0);
     this.gameTimer = 0;
     this.interval = null;
+    // DRAW MAP MODES AND BACKGROUND IMAGE BUFFER
     this.bgImageData = null;
-    this.drawMapMode = "bitmap"; // bitmap, redraw
+    this.drawMapMode = "bitmap"; // (bitmap, redraw)
     this.mapRedrawRequired = false;
+    // MOUSE SELECTOR AND OPTION BOXES
     this.selectorPosition = new Vector2(0, 0);
+    this.mouseRealPosition = new Vector2(0, 0);
+    this.optionBoxVisible = false;
+    this.optionBoxType = "new";
+    this.selectedCellPosition = new Vector2(0, 0);
+    this.selectedEntity = null;
     // INIT ALL
     this.init = function()
     {
-        // EVENTOS
-        //this.canvasManager.onMouseDown(mouseDownHandler);
         // LOAD IMAGE DATA
         this.resourceManager.init(this.canvasManager);
-        //alert ("arranco check...");
-        //var errLoop = 0;
-        while (!this.resourceManager.allImagesLoaded() && errLoop < 200)
+        while (!this.resourceManager.allImagesLoaded())
         {
             // LOADING...
-            //errLoop++;
         }
+        //this.resourceManager.playSound("echo");
         // TEST LEVEL
         this.currentLevel = new Level("test", 150);
         this.money = this.currentLevel.initialMoney;
+        this.visualMoney = this.money;
         // PATH DE PRUEBA
         var path = new Path();
         path.addPoint(-1, 8);
@@ -61,13 +67,15 @@ function Game(canvasManager)
         path2.addPoint(8, 8);
         path2.addPoint(16, 8);
         this.currentLevel.addPath(path2);
+        // BASE REAL POSITION
+        this.baseRealPosition.set(800, 400);
         // HORDE
-        var horde = new Horde(20, 100, path);
+        var horde = new Horde(20, 75, path);
         horde.addEnemies("malito", 15);
         horde.addEnemies("maluko", 5);
         horde.addEnemies("malito", 5);
         horde.addEnemies("maluko", 5);
-        var horde2 = new Horde(50, 100, path2);
+        var horde2 = new Horde(50, 75, path2);
         horde2.addEnemies("malito", 72);
         this.currentLevel.addHorde(horde);
         this.currentLevel.addHorde(horde2);
@@ -79,21 +87,25 @@ function Game(canvasManager)
         this.addTower("chinoky", new Vector2(455, 155));
         this.addTower("chinoky", new Vector2(455, 355)); */
         this.state = "playing";
-    }
+    };
     this.addTower = function(type, realPosition)
     {
         var cellPosition = getCellCoords(realPosition.x, realPosition.y);
         var towerAdded = false;
-        if (this.currentLevel.map.getLogicCell(cellPosition.x, cellPosition.y) == 0)
+        if (this.currentLevel.map.getLogicCell(cellPosition.x, cellPosition.y) === 0)
         {
             var tower = this.towerFactory.buildTower(type, cellPosition);
-            this.currentLevel.map.setLogicCell(cellPosition.x, cellPosition.y, 2);
-            this.towers.push(tower);
-            towerAdded = true;
+            if (tower.cost <= this.money)
+            {
+                this.currentLevel.map.setLogicCell(cellPosition.x, cellPosition.y, 2);
+                this.towers.push(tower);
+                this.money -= tower.cost;
+                towerAdded = true;
+            }
         }
         this.mapRedrawRequired = true;
         return towerAdded;
-    }
+    };
     // **********
     // DO ACTIONS
     // **********
@@ -119,11 +131,14 @@ function Game(canvasManager)
         var bullet;
         for (var towerIndex = 0; towerIndex < this.towers.length; towerIndex++)
         {
-            shot = this.towers[towerIndex].doAction(enemiesInAction);
-            if (shot != null)
+            // shot = this.towers[towerIndex].doAction(enemiesInAction);
+            shot = this.towers[towerIndex].doAction2(enemiesInAction, this.baseRealPosition);
+            if (shot !== null)
             {
                 bullet = this.bulletFactory.buildBullet(shot);
                 this.bullets.push(bullet);
+                // TOWER FIRE
+                this.animationManager.setCurrentScene(this.towers[towerIndex], "fire");
             }
         }
         // BULLET ACTIONS
@@ -140,14 +155,20 @@ function Game(canvasManager)
                 }
             }
         }
-    }
+        // OTHERS
+        // MONEY VISUAL INCREMENT/DECREMENT EFFECT
+        if (this.visualMoney < this.money)
+            this.visualMoney++;
+        else if (this.visualMoney > this.money)
+            this.visualMoney--;
+    };
     // ********
     // DRAW ALL
     // ********
     // DRAW MAP
     this.drawMap = function()
     {
-        if (this.bgImageData == null || this.drawMapMode == "redraw" || this.mapRedrawRequired)
+        if (this.bgImageData === null || this.drawMapMode === "redraw" || this.mapRedrawRequired)
         {
             // CLEAR CANVAS
             this.canvasManager.clear();
@@ -157,11 +178,11 @@ function Game(canvasManager)
                 for (var y = 0; y < this.currentLevel.map.height; y++)
                 {
                     typeId = this.currentLevel.map.getLogicCell(x, y);
-                    if (typeId == 0)
+                    if (typeId === 0)
                         this.canvasManager.drawImage(this.resourceManager.getImage('grass'), x * 50, y * 50);
-                    else if (typeId == 1)
+                    else if (typeId === 1)
                         this.canvasManager.drawImage(this.resourceManager.getImage('road'), x * 50, y * 50);
-                    else if (typeId == 2)
+                    else if (typeId === 2)
                     {
                         this.canvasManager.drawImage(this.resourceManager.getImage('grass'), x * 50, y * 50);
                         this.canvasManager.drawImage(this.resourceManager.getImage('towerBase'), x * 50, y * 50);
@@ -173,7 +194,7 @@ function Game(canvasManager)
         }
         else
             this.canvasManager.putImageData(this.bgImageData);
-    }
+    };
     // DRAW ALL ENTITIES (ENEMIES / TOWERS / BULLETS)
     this.drawAll = function()
     {
@@ -224,17 +245,24 @@ function Game(canvasManager)
             //this.canvasManager.drawSprite(this.resourceManager.towerImage, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1);
             this.canvasManager.drawSprite(animation.imageSrc, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1, animation.frameRect);
             // DRAW ATTACK RANGE
-            // this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
+            if (currentTower.selected)
+                this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
         }
         // BULLETS
         for (var bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++)
         {
             currentBullet = this.bullets[bulletIndex];
             if (currentBullet.active)
-                this.canvasManager.drawCircle(currentBullet.realPosition.x, currentBullet.realPosition.y, 2, "blue", "#CCCCCC");
+            {    
+                if (currentBullet.type === "smallDamage" || currentBullet.type === "mediumDamage")
+                    this.canvasManager.drawCircle(currentBullet.realPosition.x, currentBullet.realPosition.y, 2, "blue", "#CCCCCC");
+                else if (currentBullet.type === "laser")
+                    this.canvasManager.drawLine(currentBullet.realPosition.x, currentBullet.realPosition.y, currentBullet.enemyTarget.realPosition.x, currentBullet.enemyTarget.realPosition.y, "red");
+            }
         }
         // MOUSE SELECTOR
-        this.canvasManager.drawRectangle(this.selectorPosition.x, this.selectorPosition.y, 50, 50, "red");
+        //this.canvasManager.drawRectangle(this.selectorPosition.x, this.selectorPosition.y, 50, 50, "red");
+        //this.canvasManager.drawImage(this.resourceManager.getImage('optionBox'), this.selectorPosition.x - 50, this.selectorPosition.y - 50);
         // INFO BOX
         // BOX
         this.canvasManager.drawImage(this.resourceManager.getImage('moneyBox'), 645, 5);
@@ -242,13 +270,23 @@ function Game(canvasManager)
         this.canvasManager.drawEnergyBar("v", 768, 42, this.baseEnergy / 4, 4, "red", "red", -1);
         this.canvasManager.drawEnergyBar("v", 768, 42, 25, 4, "white", undefined, -1);
         // MONEY
-        this.canvasManager.drawText(this.money, 688, 36, "10pt Arial", "yellow");
-    }
+        this.canvasManager.drawText(this.visualMoney, 688, 36, "10pt Arial", "yellow");
+        // OPTION BOX
+        if (this.optionBoxVisible)
+        {
+            this.canvasManager.drawImage(this.resourceManager.getImage('optionBox'), (this.selectedCellPosition.x * 50) - 50, (this.selectedCellPosition.y * 50) - 50);
+        }
+        // GAME OVER
+        if (this.state === "gameover")
+            this.canvasManager.drawImage(this.resourceManager.getImage('gameOver'), 250, 250);
+        // MOUSE CROSSHAIR
+        this.canvasManager.drawImage(this.resourceManager.getImage('mouseCrosshair'), this.mouseRealPosition.x - (23/2), this.mouseRealPosition.y - (23/2));
+    };
     // ANIMATE ALL ENTITIES
     this.animateAll = function()
     {
         this.animationManager.doAnimations();
-    }
+    };
     // DESTROY INACTIVE ENEMIES, HORDES AND BULLETS
     this.deadBodiesCollect = function()
     {
@@ -290,48 +328,125 @@ function Game(canvasManager)
             else
                 this.bullets.splice(bulletIndex, 1);
         }
-    }
+    };
     // SIMPLE GAME LOOP
     this.mainLoop = function ()
     {
         switch (this.state)
         {
             case "initializing":
+                // LOAD ALL RESOURCES AND CREATE LEVEL 
                 this.init();
+                // HIDE STANDARD MOUSE POINTER
+                this.canvasManager.hideMousePointer();
+                // WAIT A SECOND (IMG COMPLETE BUG) AND START PLAYING MAIN LOOP
+                setTimeout("juego.initializePlayingMainLoop()", 1000);
                 break;
             case "playing":
+                this.state = "working";
                 this.doActions();
+                //var ti = new Date().getTime();
                 this.drawMap();
                 this.drawAll();
+                //var tf = new Date().getTime();
+                //divDebug(tf - ti);
                 this.animateAll();
                 this.deadBodiesCollect();
+                if (this.state !== "gameover")
+                    this.state = "playing";
                 break;
             case "gameover":
+                this.canvasManager.showMousePointer();
+                window.clearInterval(this.interval);
                 break;
         }
-    }
+    };
     // START GAME
     this.start = function()
     {
-        this.interval = setInterval("juego.mainLoop()", 25);
-    }
+        divDebug("Initializing...");
+        this.mainLoop();
+    };
+    this.initializePlayingMainLoop = function()
+    {
+        divDebug("Playing...");
+        this.interval = setInterval("juego.mainLoop()", 30);
+    };
+    // MOUSE ACTIONS
+    this.mouseClickAction = function(cellPosition)
+    {
+        if (!this.optionBoxVisible)
+        {
+            var logicCell = this.currentLevel.map.getLogicCell(cellPosition.x, cellPosition.y);
+            if (logicCell === 0)
+            {
+                this.optionBoxType = "new";
+                this.selectedCellPosition = cellPosition;
+                this.optionBoxVisible = true;
+            }
+            else if (logicCell === 2)
+            {
+                if (this.selectedEntity !== null)
+                    this.selectedEntity.selected = false;
+                // TOWERS
+                var towerIndex = 0;
+                var found = false;
+                while (towerIndex < this.towers.length && !found)
+                {
+                    currentTower = this.towers[towerIndex];
+                    if (currentTower.cellPosition.equal(cellPosition) && currentTower.selectable)
+                    {
+                        currentTower.selected = true;
+                        this.selectedEntity = currentTower;
+                        found = true;
+                    }
+                    towerIndex++;
+                }
+            }
+        }
+        else
+        {
+            var diffCellX = this.selectedCellPosition.x - cellPosition.x;
+            var diffCellY = this.selectedCellPosition.y - cellPosition.y;
+            var realPosition;
+            if (diffCellX === 1 && diffCellY === 1)
+            {
+                realPosition = new Vector2((this.selectedCellPosition.x * 50) + 5, (this.selectedCellPosition.y * 50) + 5);
+                this.addTower("chinoky", realPosition);
+                this.optionBoxVisible = false;
+            }
+            else if (diffCellX === 0 && diffCellY === 1)
+            {
+                realPosition = new Vector2((this.selectedCellPosition.x * 50) + 5, (this.selectedCellPosition.y * 50) + 5);
+                this.addTower("chinoky_2", realPosition);
+                this.optionBoxVisible = false;
+            }
+            else if (diffCellX === -1 && diffCellY === 1)
+            {
+                realPosition = new Vector2((this.selectedCellPosition.x * 50) + 5, (this.selectedCellPosition.y * 50) + 5);
+                this.addTower("tesla", realPosition);
+                this.optionBoxVisible = false;
+            }
+            else
+                this.optionBoxVisible = false;
+        }
+    };
     // MOUSE EVENT
     this.mouseDown = function(realX, realY)
     {
         var cellPosition = getCellCoords(realX, realY);
-        var realPosition = new Vector2((cellPosition.x * 50) + 5, (cellPosition.y * 50) + 5);
-        this.addTower("chinoky", realPosition);
-        //this.map.setLogicCell(celdaX, celdaY, 1);
-        //this.towers.push(this.towerFactory.getTower("chinoky", x, y));
-        // alert("hola " + cellPosition.x);
-    }
+        //var realPosition = new Vector2((cellPosition.x * 50) + 5, (cellPosition.y * 50) + 5);
+        //this.addTower("chinoky_2", realPosition);
+        this.mouseClickAction(cellPosition);
+    };
     this.mouseUp = function(realX, realY)
     {
         var cellPosition = getCellCoords(realX, realY);
-    }
+    };
     this.mouseMove = function(realX, realY)
     {
+        this.mouseRealPosition.set(realX, realY);
         var cellPosition = getCellCoords(realX, realY);
         this.selectorPosition = new Vector2(cellPosition.x * 50, cellPosition.y * 50);
-    }
+    };
 }

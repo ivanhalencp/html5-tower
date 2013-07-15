@@ -11,7 +11,7 @@ function CanvasManager(canvasId)
     this.clear = function()
     {
         this.context.clearRect(0, 0, this.width, this.height);
-    }
+    };
     // DRAW TEXT
     this.drawText = function(text, x, y, fontName, color)
     {
@@ -20,9 +20,21 @@ function CanvasManager(canvasId)
         this.context.fillStyle = color;
         this.context.fillText(text, x, y);
         this.context.restore();
-    }
+    };
+    // DRAW LINEA
+    this.drawLine = function(x1, y1, x2, y2, lineColor)
+    {
+        this.context.save();
+        this.context.strokeStyle = lineColor;  
+        this.context.beginPath();
+        this.context.moveTo(x1, y1);
+        this.context.lineTo(x2, y2);
+        this.context.closePath();
+        this.context.stroke();
+        this.context.restore();
+    };
     // DRAW / FILL RECTANGLE
-	this.drawRectangle = function (x, y, width, height, borderColor, backgroundColor)
+	this.drawRectangle = function(x, y, width, height, borderColor, backgroundColor)
 	{
         this.context.save();
         if (isset(borderColor))
@@ -36,7 +48,7 @@ function CanvasManager(canvasId)
             this.context.fillRect(x, y, width, height);
         }
         this.context.restore();
-	}
+	};
     // DRAW / FILL CIRCLE
 	this.drawCircle = function (x, y, radius, borderColor, backgroundColor)
 	{
@@ -53,7 +65,7 @@ function CanvasManager(canvasId)
         if (isset(backgroundColor))
             this.context.fill();
         this.context.restore();
-	}
+	};
     // LOAD IMAGE
     this.loadImage = function(imageSrc, onLoadHandler)
     {
@@ -62,12 +74,12 @@ function CanvasManager(canvasId)
         if (isset(onLoadHandler))
             image.onload = onLoadHandler;
         return image;
-    }
+    };
     // DRAW IMAGE
     this.drawImage = function(image, x, y)
     {
         this.context.drawImage(image, x, y);
-    }
+    };
     // DRAW SPRITE
     this.drawSprite = function(image, x, y, rotation, scale, section)
     {
@@ -84,13 +96,13 @@ function CanvasManager(canvasId)
         //         DESTINATIONX, DESTINATIONY, DESTINATIONWIDTH, DESTINATIONHEIGHT)
         this.context.drawImage(image, section.x, section.y, section.width, section.height, -section.width/2, -section.height/2, section.width, section.height);
         this.context.restore();
-    }
+    };
     this.drawEnergyBar = function(direction, x, y, energy, rectWidth, borderColor, energyColor, sense)
     {
         var width, height;
         if (!isset(sense))
             sense = 1;
-        if (direction == "h")
+        if (direction === "h")
         {
             width = energy * sense;
             height = rectWidth;
@@ -101,7 +113,7 @@ function CanvasManager(canvasId)
             height = energy * sense;
         }
         this.drawRectangle(x, y, width, height, borderColor, energyColor);
-    }
+    };
     // SAVE IMA
     this.getImageData = function(section)
     {
@@ -109,7 +121,7 @@ function CanvasManager(canvasId)
             section = new Rectangle(0, 0, this.width, this.height);
         var imageData = this.context.getImageData(section.x, section.y, section.width, section.height);
         return imageData;
-    }
+    };
     this.putImageData = function(imageData, x, y)
     {
         if (!isset(x))
@@ -117,7 +129,16 @@ function CanvasManager(canvasId)
         if (!isset(y))
             y = 0;
         this.context.putImageData(imageData, x, y);
-    }
+    };
+    // OTHERS
+    this.hideMousePointer = function()
+    {
+        this.canvas.style.cursor = "none";
+    };
+    this.showMousePointer = function()
+    {
+        this.canvas.style.cursor  = "pointer";
+    };
 }
 // SIMPLE RECTANGLE IMPLEMENTATION
 function Rectangle(x, y, width, height)
@@ -132,40 +153,45 @@ function Rectangle(x, y, width, height)
 		this.y = rectangle.y;
 		this.width = rectangle.width;
 		this.height = rectangle.height;
-	}
+	};
     this.translation = function(vector)
     {
         this.x += vector.x;
         this.y += vector.y;
-    }
+    };
 }
 // SIMPLE VECTOR 2 IMPLEMENTATION
 function Vector2(x, y)
 {
     this.x = x;
     this.y = y;
+    this.set = function(x, y)
+    {
+        this.x = x;
+        this.y = y;
+    };
     this.add = function(vector)
     {
         this.x += vector.x;
         this.y += vector.y;
-    }
+    };
     this.mult = function(scalar)
     {
         this.x *= scalar;
         this.y *= scalar;
-    }
+    };
     this.equal = function(vector)
     {
-        if (this.x == vector.x && this.y == vector.y)
+        if (this.x === vector.x && this.y === vector.y)
             return true;
         else
             return false;
-    }
+    };
     this.copy = function()
     {
         var vector = new Vector2(this.x, this.y);
         return vector;
-    }
+    };
 }
 // SIMPLE POINT
 function PathPoint(x, y)
@@ -183,13 +209,13 @@ function Path()
         var point = new PathPoint(x, y);
         this.pointsCount = this.points.push(point);
         return point;
-    }
+    };
 }
 // GENERAL UTIL
 function isset(param)
 {
     var result;
-    if (typeof(param) == 'undefined')
+    if (typeof(param) === 'undefined')
         result = false;
     else
         result = true;
@@ -215,13 +241,15 @@ function xAxisAngle(axisCenterPoint, point)
 {
     var hypo = distance(axisCenterPoint, point);
     var radAngle = 0;
-    if (hypo != 0)
+    if (hypo !== 0)
     {
         var xDiff = point.x - axisCenterPoint.x;
-        var yDiff = point.y - axisCenterPoint.y
+        var yDiff = point.y - axisCenterPoint.y;
         var ady = Math.abs(xDiff);
         var op = Math.abs(yDiff);
-        if (ady != 0)
+        if (op === 0)
+            radAngle = Math.PI;
+        else if (ady !== 0)
         {
             radAngle = Math.atan(op / ady);
             if (xDiff > 0 && yDiff < 0)

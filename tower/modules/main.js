@@ -39,13 +39,13 @@ function getMousePosition(ev)
 {
     var x, y;
     // Get the mouse position relative to the canvas element.
-    if (ev.offsetX || ev.offsetX == 0)
+    if (ev.offsetX || ev.offsetX === 0)
     {
         // OPERA / CHROME
         x = ev.offsetX;
         y = ev.offsetY;
     }
-    else if (ev.layerX || ev.layerX == 0)
+    else if (ev.layerX || ev.layerX === 0)
     {
         // FIREFOX
         x = ev.layerX;
@@ -70,4 +70,8 @@ function mouseMoveHandler(ev)
     //divDebug("x: " + mousePosition.x + ", y: " + mousePosition.y);
     juego.mouseMove(mousePosition.x, mousePosition.y);
     //$content($("debugWindow"), "x: " + mousePosition.x);
+}
+function jsonEval(jsonData)
+{
+    return eval('(' + jsonData + ')');
 }

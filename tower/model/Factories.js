@@ -6,16 +6,22 @@ function BulletFactory()
     {
         var tower = shot.tower;
         var bullet = null;
-        switch (tower.type)
+        switch (shot.bulletType)
         {
-            case "chinoky":
-                bullet = new Bullet(bulletOuid++, "chinoky_bullet", 6, 15, 15);
+            case "smallDamage":
+                bullet = new Bullet(bulletOuid++, shot.bulletType, 6, 15, 15);
+                break;
+             case "mediumDamage":
+                bullet = new Bullet(bulletOuid++, shot.bulletType, 6, 15, 30);
+                break;
+             case "laser":
+                bullet = new Bullet(bulletOuid++, shot.bulletType, -1, 50, 5);
                 break;
         }
-        if (bullet != null)
-            bullet.init(tower.realPosition.copy(), shot.enemy, tower.turretAngle);
+        if (bullet !== null)
+            bullet.init(tower.realPosition.copy(), shot.enemy, tower.turretAngle, tower.cannonLenght);
         return bullet;
-    }
+    };
 }
 // USE IT TO CREATE AND GET A NEW ENEMY
 function EnemyFactory()
@@ -34,7 +40,7 @@ function EnemyFactory()
                 break;
         }
         return enemy;
-    }
+    };
 }
 // USE IT TO CREATE AND GET A NEW TOWER
 function TowerFactory()
@@ -46,11 +52,34 @@ function TowerFactory()
         switch (type)
         {
             case "chinoky":
-                tower = new Tower(towerOuid++, type, 70, 2, 1, 20);
+                tower = new Tower(towerOuid++, type, 70, 2, "smallDamage", 20, 50, 25);
+                /* IDEA OF JSON INIT */
+                tower.jsonInit(
+                    {
+                        id: towerOuid++,
+                        type: type,
+                        cannonLenght: 25,
+                        levels: 
+                        [
+                            // LEVEL 1
+                            {attackRange: 70, angularSpeed: 2, bulletType: "smallDamage", reloadTime: 20, cost: 50},
+                            // LEVEL 2
+                            {attackRange: 70, angularSpeed: 2, bulletType: "smallDamage", reloadTime: 20, cost: 50}, 
+                            // LEVEL 3
+                            {attackRange: 70, angularSpeed: 2, bulletType: "mediumDamage", reloadTime: 20, cost: 50}
+                        ]
+                    }
+                );            
+                break;
+            case "chinoky_2":
+                tower = new Tower(towerOuid++, type, 210, 5, "mediumDamage", 10, 100, 25);
+                break;
+            case "tesla":
+                tower = new Tower(towerOuid++, type, 250, 90, "laser", 60, 150, 0);
                 break;
         }
-        if (tower != null && isset(cellPosition))
+        if (tower !== null && isset(cellPosition))
             tower.setCellPosition(cellPosition);
         return tower;
-    }
+    };
 }

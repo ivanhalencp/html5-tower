@@ -26,7 +26,7 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
     {
         this.relativePosition = relativePosition;
         this.realPosition.add(this.relativePosition);
-    }
+    };
     this.doAction = function(path)
     {
         var baseDamage = 0;
@@ -89,7 +89,7 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
             }
         }
         return baseDamage;
-    }
+    };
     this.onDamage = function(damage)
     {
         var realDamage = damage - this.armor;
@@ -98,5 +98,5 @@ function Enemy(id, type, armor, speed, damage, scoreReward, moneyReward)
         if (this.energy <= 0)
             this.alive = false;
         return this.alive;
-    }
+    };
 }

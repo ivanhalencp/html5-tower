@@ -1,21 +1,22 @@
 /*
  *   LEVEL
  */
-function Level(name, initialMoney)
+function Level(name, initialMoney, techLevel)
 {
     this.name = name;
-    this.map = new LogicMap(16, 12);
     this.initialMoney = initialMoney;
+    this.techLevel = techLevel;
+    this.map = new LogicMap(16, 12);
     this.paths = new Array();
     this.hordes = new Array();
     this.addPath = function(path)
     {
         this.paths.push(path);
-    }
+    };
     this.addHorde = function(horde)
     {
         this.hordes.push(horde);
-    }
+    };
     this.init = function()
     {
         this.map.init();
@@ -58,30 +59,16 @@ function Level(name, initialMoney)
                         this.map.setLogicCell(pathDrawer.x, pathDrawer.y, 1);
                         allPathPoints.push(pathDrawer.x, pathDrawer.y);
                     }
-                    if (pathDirection == 6)
+                    if (pathDirection === 6)
                         pathDrawer.x++;
-                    else if (pathDirection == 4)
+                    else if (pathDirection === 4)
                         pathDrawer.x--;
-                    else if (pathDirection == 8)
+                    else if (pathDirection === 8)
                         pathDrawer.y--;
-                    else if (pathDirection == 2)
+                    else if (pathDirection === 2)
                         pathDrawer.y++;
                 }
             }
-        }
-        this.readJSON = function(JSONData)
-        {
-            var exampleMap = {
-                levelName:"jsonTest",
-                initialMoney:1500,
-                hordes:[
-                    {actionTime:"", actionDelay:0, pathIndex:0},
-                    {actionTime:"", actionDelay:0, pathIndex:0}
-                ],
-                paths:[
-                    {}
-                ]
-            };
         }
         // FIX CORNERS - ASSIGN A SPECIFIC TYPE FOR VISUALLY REPRESENTING THE CORNERS
         /*for (var pathPointIndex = 0; pathPointIndex < allPathPoints.length; pathPointIndex++)
@@ -89,5 +76,5 @@ function Level(name, initialMoney)
             // TODO : IMPLEMENT THIS !
             var pathPoint = allPathPoints[pathPointIndex];
         }*/
-    }
+    };
 }

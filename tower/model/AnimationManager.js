@@ -16,6 +16,20 @@ function AnimationManager(resourceManager)
                 case "chinoky":
                     image = this.resourceManager.getImage('tower');
                     // animation = new Animation(image, image.width / 2, image.height, 2, 15);
+                    animation = new Animation(image, image.width / 4, image.height, 2, 15);
+                    animation.scenes = [
+                        {name:"default", firstFrame: 0, lastFrame: 1, gotoAndPlay: ""},
+                        {name:"fire", firstFrame: 2, lastFrame: 3, gotoAndPlay: "default"}
+                    ];
+                    break;
+                case "chinoky_2":
+                    image = this.resourceManager.getImage('tower');
+                    // animation = new Animation(image, image.width / 2, image.height, 2, 15);
+                    animation = new Animation(image, image.width / 4, image.height, 1, 15);
+                    break;
+                case "tesla":
+                    image = this.resourceManager.getImage('laserTower');
+                    // animation = new Animation(image, image.width / 2, image.height, 2, 15);
                     animation = new Animation(image, image.width, image.height, 1, 15);
                     break;
             }
@@ -43,27 +57,35 @@ function AnimationManager(resourceManager)
         // ADD ANIMATION
         this.animations.push(animation);
         entity.animationIndex = this.animationCounter++;
-    }
+    };
     // GET ENTITY ANIMATION
     this.getAnimation = function(entity)
     {
-        if (entity.animationIndex == -1)
+        if (entity.animationIndex === -1)
             this.initAnimation(entity);
         return this.animations[entity.animationIndex];
-    }
+    };
+    this.getCurrentScene = function(entity)
+    {
+        return this.animations[entity.animationIndex].currentScene;
+    };
     this.getImage = function(entity)
     {
         return this.animations[entity.animationIndex].imageSrc;
-    }
+    };
     this.getFrameRect = function(entity)
     {
         return this.animations[entity.animationIndex].frameRect;
-    }
+    };
+    this.setCurrentScene = function(entity, sceneName)
+    {
+        this.animations[entity.animationIndex].setScene(sceneName);
+    };
     this.doAnimations = function()
     {
         for (var itAnimation = 0; itAnimation < this.animations.length; itAnimation++)
         {
             this.animations[itAnimation].doAnimation();
         }
-    }
+    };
 }
