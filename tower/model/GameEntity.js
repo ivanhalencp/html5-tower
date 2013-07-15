@@ -8,4 +8,5 @@ function GameEntity()
     this.techLevelRequired = -1;
     this.selectable = true;
     this.selected = false;
+    this.state = "";
 }

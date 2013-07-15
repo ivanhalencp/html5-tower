@@ -53,7 +53,7 @@ function TowerFactory()
         {
             case "chinoky":
                 tower = new Tower(towerOuid++, type, 70, 2, "smallDamage", 20, 50, 25);
-                /* IDEA OF JSON INIT 
+                /* IDEA OF JSON INIT */
                 tower.jsonInit(
                     {
                         id: towerOuid++,
@@ -69,7 +69,7 @@ function TowerFactory()
                             {attackRange: 70, angularSpeed: 2, bulletType: "mediumDamage", reloadTime: 20, cost: 50}
                         ]
                     }
-                ); */              
+                );            
                 break;
             case "chinoky_2":
                 tower = new Tower(towerOuid++, type, 210, 5, "mediumDamage", 10, 100, 25);

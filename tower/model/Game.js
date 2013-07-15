@@ -22,6 +22,7 @@ function Game(canvasManager)
     this.visualMoney = 0;
     this.score = 0;
     this.baseEnergy = 100;
+    this.baseRealPosition = new Vector2(0, 0);
     this.gameTimer = 0;
     this.interval = null;
     // DRAW MAP MODES AND BACKGROUND IMAGE BUFFER
@@ -34,6 +35,7 @@ function Game(canvasManager)
     this.optionBoxVisible = false;
     this.optionBoxType = "new";
     this.selectedCellPosition = new Vector2(0, 0);
+    this.selectedEntity = null;
     // INIT ALL
     this.init = function()
     {
@@ -65,13 +67,15 @@ function Game(canvasManager)
         path2.addPoint(8, 8);
         path2.addPoint(16, 8);
         this.currentLevel.addPath(path2);
+        // BASE REAL POSITION
+        this.baseRealPosition.set(800, 400);
         // HORDE
-        var horde = new Horde(20, 100, path);
+        var horde = new Horde(20, 75, path);
         horde.addEnemies("malito", 15);
         horde.addEnemies("maluko", 5);
         horde.addEnemies("malito", 5);
         horde.addEnemies("maluko", 5);
-        var horde2 = new Horde(50, 100, path2);
+        var horde2 = new Horde(50, 75, path2);
         horde2.addEnemies("malito", 72);
         this.currentLevel.addHorde(horde);
         this.currentLevel.addHorde(horde2);
@@ -127,11 +131,14 @@ function Game(canvasManager)
         var bullet;
         for (var towerIndex = 0; towerIndex < this.towers.length; towerIndex++)
         {
-            shot = this.towers[towerIndex].doAction(enemiesInAction);
+            // shot = this.towers[towerIndex].doAction(enemiesInAction);
+            shot = this.towers[towerIndex].doAction2(enemiesInAction, this.baseRealPosition);
             if (shot !== null)
             {
                 bullet = this.bulletFactory.buildBullet(shot);
                 this.bullets.push(bullet);
+                // TOWER FIRE
+                this.animationManager.setCurrentScene(this.towers[towerIndex], "fire");
             }
         }
         // BULLET ACTIONS
@@ -238,7 +245,8 @@ function Game(canvasManager)
             //this.canvasManager.drawSprite(this.resourceManager.towerImage, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1);
             this.canvasManager.drawSprite(animation.imageSrc, currentTower.realPosition.x, currentTower.realPosition.y, degToRad(currentTower.turretAngle), 1, animation.frameRect);
             // DRAW ATTACK RANGE
-            this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
+            if (currentTower.selected)
+                this.canvasManager.drawCircle(currentTower.realPosition.x, currentTower.realPosition.y, currentTower.attackRange, "red");
         }
         // BULLETS
         for (var bulletIndex = 0; bulletIndex < this.bullets.length; bulletIndex++)
@@ -337,8 +345,11 @@ function Game(canvasManager)
             case "playing":
                 this.state = "working";
                 this.doActions();
+                //var ti = new Date().getTime();
                 this.drawMap();
                 this.drawAll();
+                //var tf = new Date().getTime();
+                //divDebug(tf - ti);
                 this.animateAll();
                 this.deadBodiesCollect();
                 if (this.state !== "gameover")
@@ -346,6 +357,7 @@ function Game(canvasManager)
                 break;
             case "gameover":
                 this.canvasManager.showMousePointer();
+                window.clearInterval(this.interval);
                 break;
         }
     };
@@ -358,7 +370,7 @@ function Game(canvasManager)
     this.initializePlayingMainLoop = function()
     {
         divDebug("Playing...");
-        this.interval = setInterval("juego.mainLoop()", 25);
+        this.interval = setInterval("juego.mainLoop()", 30);
     };
     // MOUSE ACTIONS
     this.mouseClickAction = function(cellPosition)
@@ -371,6 +383,25 @@ function Game(canvasManager)
                 this.optionBoxType = "new";
                 this.selectedCellPosition = cellPosition;
                 this.optionBoxVisible = true;
+            }
+            else if (logicCell === 2)
+            {
+                if (this.selectedEntity !== null)
+                    this.selectedEntity.selected = false;
+                // TOWERS
+                var towerIndex = 0;
+                var found = false;
+                while (towerIndex < this.towers.length && !found)
+                {
+                    currentTower = this.towers[towerIndex];
+                    if (currentTower.cellPosition.equal(cellPosition) && currentTower.selectable)
+                    {
+                        currentTower.selected = true;
+                        this.selectedEntity = currentTower;
+                        found = true;
+                    }
+                    towerIndex++;
+                }
             }
         }
         else
