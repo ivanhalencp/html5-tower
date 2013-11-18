@@ -47,7 +47,7 @@ function Game(canvasManager)
         }
         //this.resourceManager.playSound("echo");
         // TEST LEVEL
-        this.currentLevel = new Level("test", 150);
+        this.currentLevel = new Level("test", 1500);
         this.money = this.currentLevel.initialMoney;
         this.visualMoney = this.money;
         // PATH DE PRUEBA
@@ -281,6 +281,7 @@ function Game(canvasManager)
             this.canvasManager.drawImage(this.resourceManager.getImage('gameOver'), 250, 250);
         // MOUSE CROSSHAIR
         this.canvasManager.drawImage(this.resourceManager.getImage('mouseCrosshair'), this.mouseRealPosition.x - (23/2), this.mouseRealPosition.y - (23/2));
+        //this.canvasManager.drawImage(this.resourceManager.getImage('cloud_1'), 250, 250);
     };
     // ANIMATE ALL ENTITIES
     this.animateAll = function()
@@ -397,7 +398,8 @@ function Game(canvasManager)
                     if (currentTower.cellPosition.equal(cellPosition) && currentTower.selectable)
                     {
                         currentTower.selected = true;
-                        this.selectedEntity = currentTower;
+                        currentTower.levelUp();
+                        this.selectedEntity = currentTower;                        
                         found = true;
                     }
                     towerIndex++;

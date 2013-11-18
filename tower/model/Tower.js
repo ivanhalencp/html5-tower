@@ -18,16 +18,31 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost
     this.reloadTimer = 0;
     this.turretAngle = 0;
     this.level = 1;
+    this.jsonLevelData = null;
     this.cannonLenght = cannonLenght;
     this.jsonInit = function(jsonData)
     {
         var jsonObject = jsonData;
         this.id = jsonObject.id;
         this.type = jsonObject.type;
+        this.jsonLevelData = jsonObject.levels;
         /* this.attackRange = jsonObject.attackRange;
         this.angularSpeed = jsonObject.angularSpeed;
         this.bulletType = jsonObject.bulletType;
         this.reloadTime = jsonObject.reloadTime; */
+    };
+    this.levelUp = function()
+    {
+        if (this.level < this.jsonLevelData.length + 1)
+        {
+            this.level++;        
+            var levelIndex = this.level - 1;
+            this.attackRange = this.jsonLevelData[levelIndex].attackRange;
+            this.angularSpeed = this.jsonLevelData[levelIndex].angularSpeed;
+            this.bulletType = this.jsonLevelData[levelIndex].bulletType;
+            this.reloadTime = this.jsonLevelData[levelIndex].reloadTime;
+        }
+        return this.level;
     };
     this.setCellPosition = function(cellPosition)
     {

@@ -64,9 +64,9 @@ function TowerFactory()
                             // LEVEL 1
                             {attackRange: 70, angularSpeed: 2, bulletType: "smallDamage", reloadTime: 20, cost: 50},
                             // LEVEL 2
-                            {attackRange: 70, angularSpeed: 2, bulletType: "smallDamage", reloadTime: 20, cost: 50}, 
+                            {attackRange: 90, angularSpeed: 3, bulletType: "smallDamage", reloadTime: 10, cost: 50}, 
                             // LEVEL 3
-                            {attackRange: 70, angularSpeed: 2, bulletType: "mediumDamage", reloadTime: 20, cost: 50}
+                            {attackRange: 110, angularSpeed: 5, bulletType: "mediumDamage", reloadTime: 5, cost: 50}
                         ]
                     }
                 );            
@@ -81,5 +81,17 @@ function TowerFactory()
         if (tower !== null && isset(cellPosition))
             tower.setCellPosition(cellPosition);
         return tower;
+    };
+}
+//
+function cloudFactory()
+{
+    var cloudOuid = 0;
+    this.buildCloud = function()
+    {
+        /*var cloud = new GameEntity();
+        cloud.id = cloudOuid++;
+        cloud.type = "";
+        var cloud()*/
     };
 }
