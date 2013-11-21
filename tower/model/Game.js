@@ -9,11 +9,14 @@ function Game(canvasManager)
     this.towerFactory = new TowerFactory();
     this.enemyFactory = new EnemyFactory();
     this.bulletFactory = new BulletFactory();
+    this.cloudFactory = new CloudFactory();
+    //this.testCloud = this.cloudFactory.buildCloud(new Vector2(800, 600));
     // COLLECTIONS OF ENTITIES
     this.enemies = new Array();
     this.towers = new Array();
     this.bullets = new Array();
     this.entities = new Array();
+    this.clouds = this.cloudFactory.buildClouds(new Vector2(800, 600), 3);
     // TO ADD A NEW TOWER
     // this.towerTypeSelected = null;
     // REPRESENT THE CURRENT LEVEL WHERE IS PLAYING
@@ -47,7 +50,7 @@ function Game(canvasManager)
         }
         //this.resourceManager.playSound("echo");
         // TEST LEVEL
-        this.currentLevel = new Level("test", 150);
+        this.currentLevel = new Level("test", 1500);
         this.money = this.currentLevel.initialMoney;
         this.visualMoney = this.money;
         // PATH DE PRUEBA
@@ -111,7 +114,7 @@ function Game(canvasManager)
     // **********
     this.doActions = function()
     {
-        this.gameTimer++;
+        this.gameTimer++;        
         var enemiesInAction = new Array();
         var damage = 0;
         // HORDES / ENEMIES ACTION
@@ -156,6 +159,11 @@ function Game(canvasManager)
             }
         }
         // OTHERS
+        // CLOUDS
+        for (var cloudIndex = 0; cloudIndex < this.clouds.length; cloudIndex++)
+        {
+            this.clouds[cloudIndex].doAction();
+        }
         // MONEY VISUAL INCREMENT/DECREMENT EFFECT
         if (this.visualMoney < this.money)
             this.visualMoney++;
@@ -263,6 +271,13 @@ function Game(canvasManager)
         // MOUSE SELECTOR
         //this.canvasManager.drawRectangle(this.selectorPosition.x, this.selectorPosition.y, 50, 50, "red");
         //this.canvasManager.drawImage(this.resourceManager.getImage('optionBox'), this.selectorPosition.x - 50, this.selectorPosition.y - 50);
+        // CLOUDS
+        for (var cloudIndex = 0; cloudIndex < this.clouds.length; cloudIndex++)
+        {
+            // this.clouds[cloudIndex].doAction();
+            var currentCloud = this.clouds[cloudIndex];
+            this.canvasManager.drawImage(this.resourceManager.getImage(currentCloud.type), currentCloud.realPosition.x, currentCloud.realPosition.y);
+        }
         // INFO BOX
         // BOX
         this.canvasManager.drawImage(this.resourceManager.getImage('moneyBox'), 645, 5);
@@ -280,7 +295,7 @@ function Game(canvasManager)
         if (this.state === "gameover")
             this.canvasManager.drawImage(this.resourceManager.getImage('gameOver'), 250, 250);
         // MOUSE CROSSHAIR
-        this.canvasManager.drawImage(this.resourceManager.getImage('mouseCrosshair'), this.mouseRealPosition.x - (23/2), this.mouseRealPosition.y - (23/2));
+        this.canvasManager.drawImage(this.resourceManager.getImage('mouseCrosshair'), this.mouseRealPosition.x - (23/2), this.mouseRealPosition.y - (23/2));        
     };
     // ANIMATE ALL ENTITIES
     this.animateAll = function()
@@ -397,7 +412,8 @@ function Game(canvasManager)
                     if (currentTower.cellPosition.equal(cellPosition) && currentTower.selectable)
                     {
                         currentTower.selected = true;
-                        this.selectedEntity = currentTower;
+                        currentTower.levelUp();
+                        this.selectedEntity = currentTower;                        
                         found = true;
                     }
                     towerIndex++;

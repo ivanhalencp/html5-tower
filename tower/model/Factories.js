@@ -64,9 +64,9 @@ function TowerFactory()
                             // LEVEL 1
                             {attackRange: 70, angularSpeed: 2, bulletType: "smallDamage", reloadTime: 20, cost: 50},
                             // LEVEL 2
-                            {attackRange: 70, angularSpeed: 2, bulletType: "smallDamage", reloadTime: 20, cost: 50}, 
+                            {attackRange: 90, angularSpeed: 3, bulletType: "smallDamage", reloadTime: 10, cost: 50}, 
                             // LEVEL 3
-                            {attackRange: 70, angularSpeed: 2, bulletType: "mediumDamage", reloadTime: 20, cost: 50}
+                            {attackRange: 110, angularSpeed: 5, bulletType: "smallDamage", reloadTime: 5, cost: 50}
                         ]
                     }
                 );            
@@ -81,5 +81,28 @@ function TowerFactory()
         if (tower !== null && isset(cellPosition))
             tower.setCellPosition(cellPosition);
         return tower;
+    };
+}
+// USE IT TO CREATE AND GET A NEW RANDOM CLOUD
+function CloudFactory()
+{
+    var cloudOuid = 0;
+    var windSpeed = new Vector2(.3, 0);
+    this.buildClouds = function(screenLimits, amount)
+    {
+        var clouds = new Array();
+        for (var n = 0; n < amount; n++)
+        {
+            clouds.push(this.buildCloud(screenLimits));
+        }
+        return clouds;
+    };
+    this.buildCloud = function(screenLimits)
+    {
+        var typeIndex = Math.floor(Math.random() * 3) + 1;
+        var cloudInitialPosition = new Vector2(0, 0);                
+        cloudInitialPosition.set(Math.floor(Math.random() * screenLimits.x), Math.floor(Math.random() * screenLimits.y));                
+        var cloud = new Cloud(cloudOuid++, "cloud_" + typeIndex, cloudInitialPosition, windSpeed, screenLimits);        
+        return cloud;
     };
 }
