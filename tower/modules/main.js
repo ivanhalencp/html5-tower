@@ -14,6 +14,7 @@ $include(relPath + "model/LogicMap.js");
 $include(relPath + "model/ResourceManager.js");
 $include(relPath + "model/Shot.js");
 $include(relPath + "model/Tower.js");
+$include(relPath + "model/Cloud.js");
 
 // RETURN CELL COORDINATES FROM REAL COORDINATES
 function getCellCoords(realX, realY)

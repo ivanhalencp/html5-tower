@@ -18,31 +18,53 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost
     this.reloadTimer = 0;
     this.turretAngle = 0;
     this.level = 1;
-    this.jsonLevelData = null;
+    this.jsonLevelsDefs = null;
     this.cannonLenght = cannonLenght;
     this.jsonInit = function(jsonData)
     {
         var jsonObject = jsonData;
         this.id = jsonObject.id;
         this.type = jsonObject.type;
-        this.jsonLevelData = jsonObject.levels;
+        this.jsonLevelsDefs = jsonObject.levels;
         /* this.attackRange = jsonObject.attackRange;
         this.angularSpeed = jsonObject.angularSpeed;
         this.bulletType = jsonObject.bulletType;
         this.reloadTime = jsonObject.reloadTime; */
     };
+    this.canLevelUp = function()
+    {
+        if (this.level < this.jsonLevelsDefs.length)
+            return true;
+        else
+            return false;
+    };
     this.levelUp = function()
     {
-        if (this.level < this.jsonLevelData.length + 1)
-        {
-            this.level++;        
-            var levelIndex = this.level - 1;
-            this.attackRange = this.jsonLevelData[levelIndex].attackRange;
-            this.angularSpeed = this.jsonLevelData[levelIndex].angularSpeed;
-            this.bulletType = this.jsonLevelData[levelIndex].bulletType;
-            this.reloadTime = this.jsonLevelData[levelIndex].reloadTime;
+        if (this.canLevelUp())
+        {            
+            this.level++;
+            this.applyLevelDefs();
         }
         return this.level;
+    };
+    this.applyLevelDefs = function()
+    {
+        var currentLevelIndex = this.level - 1;
+        this.attackRange = this.jsonLevelsDefs[currentLevelIndex].attackRange;
+        this.angularSpeed = this.jsonLevelsDefs[currentLevelIndex].angularSpeed;
+        this.bulletType = this.jsonLevelsDefs[currentLevelIndex].bulletType;
+        this.reloadTime = this.jsonLevelsDefs[currentLevelIndex].reloadTime;
+        this.reloadTimer = 0;
+    };
+    this.getNextLevelCost = function()
+    {
+        var cost = -1;
+        if (this.canLevelUp())
+        {
+            var nextLevelIndex = this.level;
+            cost = this.jsonLevelsDefs[nextLevelIndex].cost;
+        }
+        return cost;
     };
     this.setCellPosition = function(cellPosition)
     {
@@ -107,7 +129,7 @@ function Tower(id, type, attackRange, angularSpeed, bulletType, reloadTime, cost
                 {
                     // MARK ENEMY AS TARGETED
                     enemy.targeted = true;
-                    if (this.reloadTimer === this.reloadTime)
+                    if (this.reloadTimer >= this.reloadTime)
                     {
                         shot = new Shot(this, enemy, this.bulletType);
                         // RESET RELOAD TIMER

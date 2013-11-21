@@ -6,7 +6,8 @@ function Level(name, initialMoney, techLevel)
     this.name = name;
     this.initialMoney = initialMoney;
     this.techLevel = techLevel;
-    this.map = new LogicMap(16, 12);
+    // CREATE TWO LAYERS MAP
+    this.map = new LogicMap(16, 12, 2);
     this.paths = new Array();
     this.hordes = new Array();
     this.addPath = function(path)

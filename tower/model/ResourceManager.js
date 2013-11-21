@@ -27,6 +27,9 @@ function ResourceManager()
         this.addImage("moneyBox", relPath + "img/moneyBox.png");
         this.addImage("gameOver", relPath + "img/gameOver_1.png");
         this.addImage("optionBox", relPath + "img/optionBox.png");
+        this.addImage("cloud_1", relPath + "img/nube_1.png");
+        this.addImage("cloud_2", relPath + "img/nube_2.png");
+        this.addImage("cloud_3", relPath + "img/nube_3.png");
         this.loadImages(canvasManager);
         // SOUNDS
         //this.addSound("echo", relPath + "sound/echo.mp3");
